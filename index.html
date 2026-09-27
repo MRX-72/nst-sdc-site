@@ -7,7 +7,7 @@
   <meta name="description" content="The NST Student Developer Club at Newton School of Technology. Open-source projects, hackathons, workshops and mentorship, run by students.">
   <!-- Browser tab icon: a terminal prompt ">_" drawn inline as SVG, so there is no extra file to host -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2309203a'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23eaf2fa' stroke-width='3' fill='none'/%3E%3Crect x='16' y='20' width='9' height='3' fill='%23ffc928'/%3E%3C/svg%3E">
-  <meta name="theme-color" content="#09203a">   <!-- colours the browser bar on phones -->
+  <meta name="theme-color" content="#000000">   <!-- colours the browser bar on phones -->
   <!-- Link previews (WhatsApp, LinkedIn, X...). Crawlers need an absolute URL: after deploying, change og.png to https://your-domain/og.png -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="NST SDC — NST Student Developer Club">
@@ -26,8 +26,8 @@
   <style type="text/tailwindcss">
     /* Design tokens. Every class like bg-print, text-tape or font-display comes from these */
     @theme {
-      --color-ink:   #09203a;   /* deepest blueprint blue: header, tiles, terminal */
-      --color-print: #0e2b4a;   /* blueprint blue: the page itself */
+      --color-ink:   #0b0d10;   /* lifted black: header, tiles, terminal (a touch above the page so surfaces still read) */
+      --color-print: #000000;   /* black: the page itself */
       --color-line:  #6fa0d0;   /* drafting lines and borders (used at low opacity) */
       --color-paper: #eaf2fa;   /* chalk-white text */
       --color-fog:   #9db6ce;   /* secondary text */
@@ -54,8 +54,8 @@
     body::before {
       content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
       background:
-        radial-gradient(ellipse 70% 55% at 50% -5%, #2b6cab80, transparent 70%),
-        radial-gradient(ellipse 120% 90% at 50% 40%, transparent 55%, #041426b3 100%);
+        radial-gradient(ellipse 70% 55% at 50% -5%, #2b6cab4d, transparent 70%),   /* dimmer on black, just a hint of blue light */
+        radial-gradient(ellipse 120% 90% at 50% 40%, transparent 55%, #000000cc 100%);
     }
     /* 3. Paper grain: SVG noise at very low opacity, so the blue reads as printed paper rather than a flat screen colour */
     body::after {
