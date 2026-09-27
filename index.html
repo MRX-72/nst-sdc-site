@@ -141,6 +141,29 @@
     /* 7. Buttons press down slightly when clicked */
     a[class*="px-6"]:active, button:active { translate: 0 1px; }
 
+    /* 8. Construction tape: two tapes cross the page at an angle, scrolling slowly in opposite directions.
+          .track holds the words; the script repeats them so the loop never shows a gap, and moving by -50% loops seamlessly */
+    .tapes { position: relative; height: 11rem; overflow: hidden; }
+    .tape { position: absolute; left: -5%; width: 110%; top: 50%; padding-block: .7rem; white-space: nowrap;
+            font-family: var(--font-display); font-size: 1.6rem; text-transform: uppercase; letter-spacing: .02em; }
+    .tape-a { rotate: -3deg; translate: 0 -50%; z-index: 1; background: var(--color-tape); color: var(--color-ink); box-shadow: 0 12px 40px #000c; }
+    .tape-b { rotate: 2.5deg; translate: 0 -50%; background: var(--color-ink); color: var(--color-tape); border-block: 1px solid #ffc92855; }
+    .track { display: inline-flex; align-items: center; gap: 1.75rem; animation: marquee 60s linear infinite; }
+    .tape-b .track { animation-direction: reverse; animation-duration: 75s; }
+    @keyframes marquee { to { translate: -50% 0; } }
+    /* The striped blocks between words, like the printed pattern on real caution tape */
+    .haz { display: inline-block; width: 2.5rem; height: .9rem; background: repeating-linear-gradient(-45deg, currentColor 0 6px, transparent 6px 12px); }
+
+    /* 9. A strip of hazard stripes marks the edge of the join section */
+    .hazard { height: .75rem; background: repeating-linear-gradient(-45deg, var(--color-tape) 0 14px, #000 14px 28px); }
+
+    /* 10. Tiles get a faint lit top edge, so they read as raised surfaces on the black */
+    #events article { box-shadow: inset 0 1px 0 #ffffff14; }
+
+    /* 11. Footer wordmark: the club name, huge and drawn only in outline, bleeding off the bottom of the page */
+    .wordmark { font-family: var(--font-display); font-size: clamp(5rem, 25vw, 24rem); line-height: .78; text-align: center; text-transform: uppercase;
+                white-space: nowrap; color: transparent; -webkit-text-stroke: 1px #ffffff26; overflow: hidden; user-select: none; margin-top: -1rem; }
+
     /* Everyone who asked their system for less motion gets none of the above: everything appears in its final state */
     @media (prefers-reduced-motion: reduce) {
       *, ::before, ::after { animation: none !important; transition: none !important; }
@@ -198,7 +221,7 @@
 
       <!-- The terminal. Visitors can type real commands; the script at the bottom answers them.
            focus-within lights the border yellow while the prompt has focus (that is the keyboard focus indicator here) -->
-      <div id="terminal" style="--d:1s" class="rise overflow-hidden rounded-xl border border-line/30 bg-ink/90 font-mono text-sm shadow-2xl shadow-black/40 focus-within:border-tape/70">
+      <div id="terminal" style="--d:1s" class="rise overflow-hidden rounded-xl border border-line/30 bg-ink/90 font-mono text-sm shadow-2xl shadow-black/40 inset-shadow-[0_1px_0_#ffffff14] focus-within:border-tape/70 focus-within:shadow-[0_0_70px_-12px_#ffc92840]">
         <div class="flex items-center gap-2 border-b border-line/20 px-4 py-3">
           <span class="size-3 rounded-full bg-[#ff5f57]"></span><span class="size-3 rounded-full bg-[#febc2e]"></span><span class="size-3 rounded-full bg-[#28c840]"></span>
           <span class="ml-2 text-xs text-fog">sdc@nst: ~</span>
@@ -229,6 +252,12 @@
         <div class="cell"><dt class="text-sm text-fog">Founded</dt><dd class="font-display text-4xl sm:text-5xl">2024</dd></div>
       </dl>
     </section>
+
+    <!-- ============ TAPE: two crossing strips of construction tape. Decorative (the same words appear on the page), so hidden from screen readers ============ -->
+    <div class="tapes my-8" aria-hidden="true">
+      <div class="tape tape-a"><div class="track"><span>Open source</span><i class="haz"></i><span>Hackathons</span><i class="haz"></i><span>Workshops</span><i class="haz"></i><span>Mentorship</span><i class="haz"></i><span>GSoC prep</span><i class="haz"></i><span>Hacktoberfest</span><i class="haz"></i></div></div>
+      <div class="tape tape-b"><div class="track"><span>Learn by doing</span><i class="haz"></i><span>Grow by sharing</span><i class="haz"></i></div></div>
+    </div>
 
     <!-- ============ ABOUT: who we are and our mission, then what we do as ruled rows ============ -->
     <section id="about" class="wrap scroll-mt-16 py-24">
@@ -502,6 +531,7 @@
     </section>
 
     <!-- ============ JOIN: the one loud yellow block on the page, so the call to action can't be missed ============ -->
+    <div class="hazard" aria-hidden="true"></div>
     <section id="join" class="scroll-mt-16 bg-tape text-ink">
       <div class="wrap grid items-end gap-8 py-20 md:grid-cols-[1.4fr_1fr]">
         <div>
@@ -543,6 +573,8 @@
       </ul>
     </div>
   </footer>
+  <!-- Giant outlined club name at the very bottom (see MOTION 11). Purely decorative -->
+  <p class="wordmark" aria-hidden="true">NST/SDC</p>
 
   <script>
     const $ = s => document.querySelector(s);
@@ -632,6 +664,9 @@
         out.textContent += 'Type "help", or tap a command below.\n\n';
       }, 120);
     }, calm ? 0 : 1300);
+
+    // ---------- Construction tape: repeat the words so each track is far wider than the screen (the loop needs 2 identical halves) ----------
+    document.querySelectorAll('.track').forEach(t => t.innerHTML = t.innerHTML.repeat(t.closest('.tape-b') ? 12 : 6));
 
     // ---------- Drafting light: follow the mouse (only on devices with a real pointer, and not for reduced motion) ----------
     const spot = $('.spot');
