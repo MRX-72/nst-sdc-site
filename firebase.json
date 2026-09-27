@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json", ".firebaserc", "**/.*", "**/node_modules/**",
+      "tailwind.css", "package.json", "package-lock.json", "process.md"
+    ],
+    "cleanUrls": true,
+    "headers": [
+      { "source": "**/*.@(jpg|png|css)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }] }
+    ]
+  }
+}
