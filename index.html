@@ -161,6 +161,10 @@
     .wordmark { font-family: var(--font-display); font-size: clamp(5rem, 25vw, 24rem); line-height: .78; text-align: center; text-transform: uppercase;
                 white-space: nowrap; color: transparent; -webkit-text-stroke: 1px #ffffff26; overflow: hidden; user-select: none; margin-top: -1rem; }
 
+    /* Row separator for lists on top of the grid: a short yellow dash above every row except the first */
+    .dashed > * { position: relative; }
+    .dashed > * + *::before { content: ""; position: absolute; top: 0; left: 0; width: 2rem; height: 2px; background: var(--color-tape); }
+
     /* Everyone who asked their system for less motion gets none of the above: everything appears in its final state */
     @media (prefers-reduced-motion: reduce) {
       *, ::before, ::after { animation: none !important; transition: none !important; }
@@ -275,7 +279,8 @@
       </div>
 
       <h3 class="mt-20 text-2xl font-bold">What we do</h3>
-      <div class="mt-6 divide-y divide-line/30 border-y border-line/30">
+      <!-- "dashed": a short yellow dash between rows instead of full-width lines, so nothing runs parallel to the background grid -->
+      <div class="dashed mt-6">
         <article class="grid gap-3 py-7 md:grid-cols-[1fr_1.4fr]">
           <h4 class="text-xl font-bold">Open-source projects</h4>
           <p class="text-fog">We build and maintain tools that NST students actually use, all in the open on GitHub. Every October, Hacktoberfest events and beginner workshops take members from zero to their first merged pull request.</p>
