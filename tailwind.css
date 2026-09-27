@@ -152,6 +152,26 @@ a[class*="px-6"]:active, button:active { translate: 0 1px; }
 .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: .8; transition: opacity .2s, scale .4s; }
 .row:hover .thumb img { opacity: 1; scale: 1.04; }
 
+/* Live activity dot: a soft green ring that pulses outward, like a "live" indicator */
+.pulse { box-shadow: 0 0 0 0 #28c84099; animation: pulse 2s ease-out infinite; }
+@keyframes pulse { to { box-shadow: 0 0 0 8px #28c84000; } }
+
+/* Terminal window states (set by the window buttons).
+   .max: the terminal floats over the page, big and centred; the huge shadow dims everything behind it.
+   .min: only the title bar stays visible */
+#terminal.max { position: fixed; z-index: 40; inset: 8vh max(1.25rem, calc(50% - 32rem)); display: flex; flex-direction: column;
+                box-shadow: 0 0 0 100vmax #000000b3; animation: none; background: var(--color-ink); }
+#terminal.max #out { flex: 1; height: auto; }
+#terminal.min #out, #terminal.min #term, #terminal.min #quick { display: none; }
+
+/* Back-to-top button and toast: hidden until the script adds .show, then they fade and slide in */
+#to-top, #toast { opacity: 0; visibility: hidden; transition: opacity .25s, translate .25s, visibility .25s; }
+#to-top { translate: 0 8px; }
+#toast { translate: -50% 8px; }
+#to-top.show, #toast.show { opacity: 1; visibility: visible; }
+#to-top.show { translate: 0 0; }
+#toast.show { translate: -50% 0; }
+
 /* Row separator for lists on top of the grid: a short yellow dash above every row except the first */
 .dashed > * { position: relative; }
 .dashed > * + *::before { content: ""; position: absolute; top: 0; left: 0; width: 2rem; height: 2px; background: var(--color-tape); }

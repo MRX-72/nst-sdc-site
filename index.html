@@ -69,13 +69,22 @@
           <a href="#join" class="rounded bg-tape px-6 py-3 font-bold text-ink hover:brightness-110">Join the club</a>
           <a href="#projects" class="rounded border border-line/50 px-6 py-3 font-medium hover:border-paper">See what we've built</a>
         </div>
+        <!-- Live activity: filled in from GitHub by the script ("Live GitHub data"). Stays hidden if GitHub can't be reached -->
+        <p id="live" hidden class="mt-6 flex items-center gap-2.5 text-sm text-fog">
+          <span class="pulse size-2 shrink-0 rounded-full bg-[#28c840]" aria-hidden="true"></span><span></span>
+        </p>
       </div>
 
       <!-- The terminal. Visitors can type real commands; the script at the bottom answers them.
            focus-within lights the border yellow while the prompt has focus (that is the keyboard focus indicator here) -->
       <div id="terminal" style="--d:1s" class="rise overflow-hidden rounded-xl border border-line/30 bg-ink/90 font-mono text-sm shadow-2xl shadow-black/40 inset-shadow-[0_1px_0_#ffffff14] focus-within:border-tape/70 focus-within:shadow-[0_0_70px_-12px_#ffc92840]">
         <div class="flex items-center gap-2 border-b border-line/20 px-4 py-3">
-          <span class="size-3 rounded-full bg-[#ff5f57]"></span><span class="size-3 rounded-full bg-[#febc2e]"></span><span class="size-3 rounded-full bg-[#28c840]"></span>
+          <!-- Window buttons, like macOS: red "exits", yellow shrinks, green expands. Their symbols show on hover (group-hover) -->
+          <div class="group flex gap-2 text-[9px] leading-none font-bold text-black/60">
+            <button type="button" data-win="close" aria-label="Exit terminal" class="grid size-3 place-items-center rounded-full bg-[#ff5f57]"><span class="opacity-0 group-hover:opacity-100">×</span></button>
+            <button type="button" data-win="min" aria-label="Shrink terminal" class="grid size-3 place-items-center rounded-full bg-[#febc2e]"><span class="opacity-0 group-hover:opacity-100">−</span></button>
+            <button type="button" data-win="max" aria-label="Expand terminal" class="grid size-3 place-items-center rounded-full bg-[#28c840]"><span class="opacity-0 group-hover:opacity-100">+</span></button>
+          </div>
           <span class="ml-2 text-xs text-fog">sdc@nst: ~</span>
         </div>
         <!-- aria-live reads new output aloud to screen-reader users -->
@@ -100,8 +109,8 @@
     <!-- "81" is a fallback: the script replaces it with the live count from GitHub (see "Live GitHub data") -->
     <section class="wrap">
       <dl class="grid grid-cols-3 border-t border-l border-line/30 bg-ink">   <!-- solid backing so the grid doesn't run through the numbers -->
-        <div class="cell"><dt class="text-sm text-fog">Student developers</dt><dd class="font-display text-4xl sm:text-5xl">100+</dd></div>
-        <div class="cell"><dt class="text-sm text-fog">Public repos</dt><dd data-repo-count class="font-display text-4xl sm:text-5xl">81</dd></div>
+        <div class="cell"><dt class="text-sm text-fog">Student developers</dt><dd data-count="100" class="font-display text-4xl tabular-nums sm:text-5xl">100+</dd></div>
+        <div class="cell"><dt class="text-sm text-fog">Public repos</dt><dd data-repo-count data-count="81" class="font-display text-4xl tabular-nums sm:text-5xl">81</dd></div>
         <div class="cell"><dt class="text-sm text-fog">Founded</dt><dd class="font-display text-4xl sm:text-5xl">2024</dd></div>
       </dl>
     </section>
@@ -174,42 +183,42 @@
       <h2 class="h2">Built by members</h2>
       <p class="lede">A selection from our <a href="https://github.com/nst-sdc" class="link" data-repo-count>81 public repositories</a>. Most started as a campus problem someone got tired of.</p>
       <div class="mt-10 border-t border-line/30 text-sm">
-        <div class="hidden grid-cols-[9rem_12rem_1fr_8rem_7rem] gap-6 border-b border-line/30 py-3 text-fog lg:grid"><span></span><span>Project</span><span>What it does</span><span>Type</span><span>Links</span></div>
+        <div class="hidden grid-cols-[9rem_12rem_1fr_8rem_8.5rem] gap-6 border-b border-line/30 py-3 text-fog lg:grid"><span></span><span>Project</span><span>What it does</span><span>Type</span><span>Links</span></div>
         <ul class="divide-y divide-line/30 border-b border-line/30">
-          <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_7rem] lg:gap-6">
+          <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_8.5rem] lg:gap-6">
             <a href="https://shuttle-tracker-eta.vercel.app" class="thumb" tabindex="-1" aria-hidden="true"><img src="img/shuttle-tracker.jpg" alt="" width="640" height="400" loading="lazy" decoding="async"></a>
             <h3 class="text-lg font-bold text-paper">Shuttle Tracker</h3>
             <p class="text-fog">See exactly where the college shuttle is, request a pickup in one tap, and show your class schedule to the driver.</p>
             <span>Web app</span>
-            <span class="flex gap-4"><a href="https://shuttle-tracker-eta.vercel.app" class="link">Live<span class="sr-only"> site of Shuttle Tracker</span></a><a href="https://github.com/nst-sdc/Shuttle_Tracker" class="link">Code<span class="sr-only"> for Shuttle Tracker</span></a></span>
+            <span class="flex items-center gap-3 self-start"><a href="https://shuttle-tracker-eta.vercel.app" class="link">Live<span class="sr-only"> site of Shuttle Tracker</span></a><a href="https://github.com/nst-sdc/Shuttle_Tracker" class="link">Code<span class="sr-only"> for Shuttle Tracker</span></a></span>
           </li>
-          <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_7rem] lg:gap-6">
+          <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_8.5rem] lg:gap-6">
             <a href="https://screentime-recoder.vercel.app" class="thumb" tabindex="-1" aria-hidden="true"><img src="img/screen-time-recorder.jpg" alt="" width="640" height="400" loading="lazy" decoding="async"></a>
             <h3 class="text-lg font-bold text-paper">Screen Time Recorder</h3>
             <p class="text-fog">Measures your real study time by analysing what's on screen, and uses AI to spot focus, flag hard topics and offer help.</p>
             <span>Web app, AI</span>
-            <span class="flex gap-4"><a href="https://screentime-recoder.vercel.app" class="link">Live<span class="sr-only"> site of Screen Time Recorder</span></a><a href="https://github.com/nst-sdc/Screentime-recoder" class="link">Code<span class="sr-only"> for Screen Time Recorder</span></a></span>
+            <span class="flex items-center gap-3 self-start"><a href="https://screentime-recoder.vercel.app" class="link">Live<span class="sr-only"> site of Screen Time Recorder</span></a><a href="https://github.com/nst-sdc/Screentime-recoder" class="link">Code<span class="sr-only"> for Screen Time Recorder</span></a></span>
           </li>
-          <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_7rem] lg:gap-6">
+          <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_8.5rem] lg:gap-6">
             <a href="https://oss-tracker.nstsdc.org" class="thumb" tabindex="-1" aria-hidden="true"><img src="img/open-source-tracker.jpg" alt="" width="640" height="400" loading="lazy" decoding="async"></a>
             <h3 class="text-lg font-bold text-paper">Open Source Tracker</h3>
             <p class="text-fog">Follows open-source contributions made by NST students across GitHub.</p>
             <span>Web app</span>
-            <span class="flex gap-4"><a href="https://oss-tracker.nstsdc.org" class="link">Live<span class="sr-only"> site of Open Source Tracker</span></a><a href="https://github.com/nst-sdc/Open-Source-Tracker-NST" class="link">Code<span class="sr-only"> for Open Source Tracker</span></a></span>
+            <span class="flex items-center gap-3 self-start"><a href="https://oss-tracker.nstsdc.org" class="link">Live<span class="sr-only"> site of Open Source Tracker</span></a><a href="https://github.com/nst-sdc/Open-Source-Tracker-NST" class="link">Code<span class="sr-only"> for Open Source Tracker</span></a></span>
           </li>
-          <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_7rem] lg:gap-6">
+          <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_8.5rem] lg:gap-6">
             <a href="https://h-ckollab.vercel.app" class="thumb" tabindex="-1" aria-hidden="true"><img src="img/h-ckollab.jpg" alt="" width="640" height="400" loading="lazy" decoding="async"></a>
             <h3 class="text-lg font-bold text-paper">H-ckollab</h3>
             <p class="text-fog">Find the right teammates for hackathons and project-based learning.</p>
             <span>Full-stack app</span>
-            <span class="flex gap-4"><a href="https://h-ckollab.vercel.app" class="link">Live<span class="sr-only"> site of H-ckollab</span></a><a href="https://github.com/nst-sdc/-H-ckollab" class="link">Code<span class="sr-only"> for H-ckollab</span></a></span>
+            <span class="flex items-center gap-3 self-start"><a href="https://h-ckollab.vercel.app" class="link">Live<span class="sr-only"> site of H-ckollab</span></a><a href="https://github.com/nst-sdc/-H-ckollab" class="link">Code<span class="sr-only"> for H-ckollab</span></a></span>
           </li>
-          <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_7rem] lg:gap-6">
+          <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_8.5rem] lg:gap-6">
             <a href="https://anonymeet.vercel.app" class="thumb" tabindex="-1" aria-hidden="true"><img src="img/anonymeet.jpg" alt="" width="640" height="400" loading="lazy" decoding="async"></a>
             <h3 class="text-lg font-bold text-paper">Anonymeet</h3>
             <p class="text-fog">Students ask teachers questions anonymously, in real time, so nobody stays stuck because they're shy.</p>
             <span>Web app</span>
-            <span class="flex gap-4"><a href="https://anonymeet.vercel.app" class="link">Live<span class="sr-only"> site of Anonymeet</span></a><a href="https://github.com/nst-sdc/Anonymous_Question_Asking-Platform" class="link">Code<span class="sr-only"> for Anonymeet</span></a></span>
+            <span class="flex items-center gap-3 self-start"><a href="https://anonymeet.vercel.app" class="link">Live<span class="sr-only"> site of Anonymeet</span></a><a href="https://github.com/nst-sdc/Anonymous_Question_Asking-Platform" class="link">Code<span class="sr-only"> for Anonymeet</span></a></span>
           </li>
         </ul>
       </div>
@@ -217,29 +226,29 @@
       <!-- Projects without a live site: a compact list, no thumbnails (there's no screenshot to show) -->
       <h3 class="mt-16 text-xl font-bold">More on GitHub</h3>
       <ul class="mt-6 divide-y divide-line/30 border-y border-line/30 text-sm">
-          <li class="row grid gap-2 py-5 md:grid-cols-[12rem_1fr_9rem_5rem] md:gap-6">
+          <li class="row grid gap-2 py-5 md:grid-cols-[12rem_1fr_9rem_6.5rem] md:gap-6">
             <h4 class="font-bold text-paper">Campus Buddy</h4>
             <p class="text-fog">One place for NST students and clubs to discover, manage and track campus events.</p>
             <span>Web app</span>
-            <span class="flex gap-4"><a href="https://github.com/nst-sdc/Campus-Buddy" class="link">Code<span class="sr-only"> for Campus Buddy</span></a></span>
+            <span class="flex items-center gap-3 self-start"><a href="https://github.com/nst-sdc/Campus-Buddy" class="link">Code<span class="sr-only"> for Campus Buddy</span></a></span>
           </li>
-          <li class="row grid gap-2 py-5 md:grid-cols-[12rem_1fr_9rem_5rem] md:gap-6">
+          <li class="row grid gap-2 py-5 md:grid-cols-[12rem_1fr_9rem_6.5rem] md:gap-6">
             <h4 class="font-bold text-paper">StackMate</h4>
             <p class="text-fog">Notes, JSON validation, Stack Overflow search and coding stats, all inside VS Code.</p>
             <span>VS Code extension</span>
-            <span class="flex gap-4"><a href="https://github.com/nst-sdc/StackMate" class="link">Code<span class="sr-only"> for StackMate</span></a></span>
+            <span class="flex items-center gap-3 self-start"><a href="https://github.com/nst-sdc/StackMate" class="link">Code<span class="sr-only"> for StackMate</span></a></span>
           </li>
-          <li class="row grid gap-2 py-5 md:grid-cols-[12rem_1fr_9rem_5rem] md:gap-6">
+          <li class="row grid gap-2 py-5 md:grid-cols-[12rem_1fr_9rem_6.5rem] md:gap-6">
             <h4 class="font-bold text-paper">Tekron 2.0</h4>
             <p class="text-fog">Check-in for college fests: fast entry, live updates and venue assignment the moment you arrive.</p>
             <span>Mobile app</span>
-            <span class="flex gap-4"><a href="https://github.com/nst-sdc/tekron-2.0-APK" class="link">Code<span class="sr-only"> for Tekron 2.0</span></a></span>
+            <span class="flex items-center gap-3 self-start"><a href="https://github.com/nst-sdc/tekron-2.0-APK" class="link">Code<span class="sr-only"> for Tekron 2.0</span></a></span>
           </li>
-          <li class="row grid gap-2 py-5 md:grid-cols-[12rem_1fr_9rem_5rem] md:gap-6">
+          <li class="row grid gap-2 py-5 md:grid-cols-[12rem_1fr_9rem_6.5rem] md:gap-6">
             <h4 class="font-bold text-paper">SDC Portal</h4>
             <p class="text-fog">Dashboards for members' GitHub activity: commits, pull requests, issues, leaderboards and achievements.</p>
             <span>Web app</span>
-            <span class="flex gap-4"><a href="https://github.com/nst-sdc/NST-SDC-Portal" class="link">Code<span class="sr-only"> for SDC Portal</span></a></span>
+            <span class="flex items-center gap-3 self-start"><a href="https://github.com/nst-sdc/NST-SDC-Portal" class="link">Code<span class="sr-only"> for SDC Portal</span></a></span>
           </li>
       </ul>
      </div>
@@ -410,7 +419,8 @@
       <div class="wrap grid items-end gap-8 py-20 md:grid-cols-[1.4fr_1fr]">
         <div>
           <h2 class="font-display text-[clamp(3.5rem,8vw,6rem)] leading-[.85] uppercase">Build with us</h2>
-          <p class="mt-4 max-w-sm text-lg">Leave your email and we'll tell you when recruitment opens. Or write to <a href="mailto:support@nstsdc.org" class="font-bold underline underline-offset-4">support@nstsdc.org</a>.</p>
+          <p class="mt-4 max-w-sm text-lg">Leave your email and we'll tell you when recruitment opens. Or write to <a href="mailto:support@nstsdc.org" class="font-bold underline underline-offset-4">support@nstsdc.org</a>
+            <button type="button" data-copy="support@nstsdc.org" data-what="Email address" class="copy ml-1 align-middle text-ink/70 hover:text-ink" aria-label="Copy email address"></button></p>
         </div>
         <!-- The script at the bottom handles sending. The status line below tells people what happened -->
         <div>
@@ -447,6 +457,13 @@
       </ul>
     </div>
   </footer>
+  <!-- Back to top: appears once you've scrolled a couple of screens down (the script toggles .show) -->
+  <a href="#" id="to-top" aria-label="Back to top" class="fixed right-5 bottom-5 z-20 grid size-11 place-items-center rounded-full border border-line/40 bg-ink/80 text-tape backdrop-blur hover:border-tape">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg>
+  </a>
+  <!-- Toast: the small "Copied" message at the bottom of the screen. role=status makes screen readers announce it -->
+  <div id="toast" role="status" class="pointer-events-none fixed bottom-6 left-1/2 z-30 rounded-full border border-line/40 bg-ink px-4 py-2 text-sm"></div>
+
   <!-- Giant outlined club name at the very bottom (see MOTION 11). Purely decorative -->
   <p class="wordmark" aria-hidden="true">NST/SDC</p>
 
@@ -484,7 +501,7 @@
       gh.count = data.count; gh.repos = data.repos;   // repos are sorted newest-first, which the "activity" command relies on
 
       // 1. Every element marked data-repo-count gets the live number
-      document.querySelectorAll('[data-repo-count]').forEach(el => el.textContent = el.textContent.replace(/\d+/, gh.count));
+      document.querySelectorAll('[data-repo-count]').forEach(el => { el.textContent = el.textContent.replace(/\d+/, gh.count); if (el.dataset.count) el.dataset.count = gh.count; });   // data-count keeps the counting animation aiming at the live number
       // 2. Each project row gets its star count and last update, matched by the repo name in its "Code" link
       document.querySelectorAll('#projects li.row').forEach(row => {
         const name = row.querySelector('a[href^="https://github.com/nst-sdc/"]')?.pathname.split('/')[2];
@@ -492,6 +509,12 @@
         if (repo) row.querySelector('p').insertAdjacentHTML('beforeend',
           `<span class="mt-1 block text-xs text-fog/70"><span aria-hidden="true">★</span> ${repo.stars} ${repo.stars === 1 ? 'star' : 'stars'}, updated ${ago(repo.pushed)}</span>`);
       });
+      // 3. The live activity line in the hero: the most recently updated repo
+      const latest = gh.repos[0];
+      if (latest) {
+        $('#live span:last-child').innerHTML = `Latest: <a class="text-paper hover:text-tape" href="https://github.com/nst-sdc/${latest.name}">${latest.name}</a> updated ${ago(latest.pushed)}`;
+        $('#live').hidden = false;
+      }
     }
     loadGitHub().catch(() => {});   // offline or rate-limited: keep the numbers already on the page
 
@@ -605,6 +628,68 @@
       addEventListener('scroll', update, { passive: true });   // keep the light under the mouse while the page scrolls
       document.addEventListener('pointerleave', () => spot.classList.remove('on'));
     }
+
+    // ---------- Terminal window buttons ----------
+    const win = $('#terminal');
+    const setMax = on => { win.classList.toggle('max', on); if (on) input.focus(); };
+    document.querySelectorAll('[data-win]').forEach(b => b.onclick = () => {
+      const what = b.dataset.win;
+      if (what === 'max') setMax(!win.classList.contains('max'));       // green: expand, or back to normal if already expanded
+      if (what === 'min') {                                              // yellow: leave expanded view, otherwise fold the output away
+        if (win.classList.contains('max')) setMax(false); else win.classList.toggle('min');
+      }
+      if (what === 'close') {                                            // red: pretend to exit, then "reboot"
+        setMax(false); win.classList.remove('min');
+        out.textContent += '$ exit\nlogout\n\n[Process completed]\nJust kidding. Builders never log off. Restarting...\n\n';
+        out.scrollTop = out.scrollHeight;
+        setTimeout(() => { out.textContent = ''; run('about', false); out.textContent += 'Type "help", or tap a command below.\n\n'; }, calm ? 0 : 1800);
+      }
+    });
+    addEventListener('keydown', e => e.key === 'Escape' && setMax(false));   // Esc leaves the expanded view
+
+    // ---------- Counting stats: numbers count up from 0 the first time they scroll into view ----------
+    // The final numbers are already in the HTML, so without JavaScript (or with reduced motion) they simply show as-is
+    if (!calm) {
+      const counter = new IntersectionObserver(entries => entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        counter.unobserve(e.target);
+        const el = e.target, suffix = el.textContent.replace(/\d+/, ''), start = performance.now();
+        const tick = now => {
+          const t = Math.min(1, (now - start) / 1200), eased = 1 - (1 - t) ** 3;     // 1.2s, fast at first then slowing down
+          el.textContent = Math.round(eased * el.dataset.count) + suffix;
+          if (t < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }), { threshold: 0.6 });
+      document.querySelectorAll('[data-count]').forEach(el => counter.observe(el));
+    }
+
+    // ---------- Copy buttons ----------
+    // Every project gets a button that copies its "git clone" command; any element with data-copy copies that text
+    const clipIcon = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/></svg>';
+    document.querySelectorAll('#projects li.row').forEach(row => {
+      const code = row.querySelector('a[href^="https://github.com/nst-sdc/"]'), name = row.querySelector('h3, h4').textContent;
+      code.insertAdjacentHTML('afterend', `<button type="button" class="copy text-fog hover:text-tape" data-copy="git clone ${code.href}.git" data-what="Clone command" aria-label="Copy git clone command for ${name}" title="Copy git clone command"></button>`);
+    });
+    document.querySelectorAll('.copy').forEach(b => b.innerHTML = clipIcon);
+
+    const toast = $('#toast');
+    let toastTimer;
+    const say = msg => {                                                  // show the toast for 2 seconds
+      toast.textContent = msg; toast.classList.add('show');
+      clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+    };
+    document.addEventListener('click', async e => {
+      const b = e.target.closest('[data-copy]');
+      if (!b) return;
+      try { await navigator.clipboard.writeText(b.dataset.copy); say(`${b.dataset.what} copied`); }
+      catch { say(`Couldn't copy. Here it is: ${b.dataset.copy}`); }
+    });
+
+    // ---------- Back to top: show the button after two screens of scrolling ----------
+    const toTop = $('#to-top');
+    const toggleTop = () => toTop.classList.toggle('show', scrollY > innerHeight * 2);
+    addEventListener('scroll', toggleTop, { passive: true }); toggleTop();
 
     // ---------- Header: underline the link of the section you're currently reading ----------
     const navLinks = [...document.querySelectorAll('nav[aria-label="Main"] a[href^="#"]:not([href="#join"]):not([href="#"])')];
