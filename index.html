@@ -141,18 +141,15 @@
     /* 7. Buttons press down slightly when clicked */
     a[class*="px-6"]:active, button:active { translate: 0 1px; }
 
-    /* 8. Construction tape: two tapes cross the page at an angle, scrolling slowly in opposite directions.
-          .track holds the words; the script repeats them so the loop never shows a gap, and moving by -50% loops seamlessly */
-    .tapes { position: relative; height: 11rem; overflow: hidden; }
-    .tape { position: absolute; left: -5%; width: 110%; top: 50%; padding-block: .7rem; white-space: nowrap;
-            font-family: var(--font-display); font-size: 1.6rem; text-transform: uppercase; letter-spacing: .02em; }
-    .tape-a { rotate: -3deg; translate: 0 -50%; z-index: 1; background: var(--color-tape); color: var(--color-ink); box-shadow: 0 12px 40px #000c; }
-    .tape-b { rotate: 2.5deg; translate: 0 -50%; background: var(--color-ink); color: var(--color-tape); border-block: 1px solid #ffc92855; }
-    .track { display: inline-flex; align-items: center; gap: 1.75rem; animation: marquee 60s linear infinite; }
-    .tape-b .track { animation-direction: reverse; animation-duration: 75s; }
+    /* 8. Stack strip: one straight, quiet row of the tools members use, drifting slowly sideways.
+          The edges fade out (mask) so words glide in and out instead of being cut off. Hovering pauses it.
+          .track holds the list twice, so moving it by -50% loops with no visible jump */
+    .marquee { mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+    .track { display: flex; width: max-content; align-items: center; gap: 2.5rem; animation: marquee 50s linear infinite; }
+    .marquee:hover .track { animation-play-state: paused; }
     @keyframes marquee { to { translate: -50% 0; } }
-    /* The striped blocks between words, like the printed pattern on real caution tape */
-    .haz { display: inline-block; width: 2.5rem; height: .9rem; background: repeating-linear-gradient(-45deg, currentColor 0 6px, transparent 6px 12px); }
+    .track li { display: flex; align-items: center; gap: 2.5rem; }
+    .track li::after { content: ""; width: 5px; height: 5px; background: var(--color-tape); rotate: 45deg; }   /* small yellow diamond after each name */
 
     /* 9. A strip of hazard stripes marks the edge of the join section */
     .hazard { height: .75rem; background: repeating-linear-gradient(-45deg, var(--color-tape) 0 14px, #000 14px 28px); }
@@ -253,11 +250,19 @@
       </dl>
     </section>
 
-    <!-- ============ TAPE: two crossing strips of construction tape. Decorative (the same words appear on the page), so hidden from screen readers ============ -->
-    <div class="tapes my-8" aria-hidden="true">
-      <div class="tape tape-a"><div class="track"><span>Open source</span><i class="haz"></i><span>Hackathons</span><i class="haz"></i><span>Workshops</span><i class="haz"></i><span>Mentorship</span><i class="haz"></i><span>GSoC prep</span><i class="haz"></i><span>Hacktoberfest</span><i class="haz"></i></div></div>
-      <div class="tape tape-b"><div class="track"><span>Learn by doing</span><i class="haz"></i><span>Grow by sharing</span><i class="haz"></i></div></div>
-    </div>
+    <!-- ============ STACK STRIP: the tools members build with (from the club's README). Label stays put, names scroll ============ -->
+    <section class="mt-16 border-y border-line/20 bg-ink/40" aria-label="What we build with">
+      <div class="wrap flex items-center gap-6 py-5">
+        <h2 class="shrink-0 text-sm text-fog">What we build with</h2>
+        <div class="marquee min-w-0 flex-1 overflow-hidden">
+          <ul class="track text-lg font-medium text-paper/80">
+            <li>JavaScript</li><li>React</li><li>Vue.js</li><li>Node.js</li><li>Django</li><li>Flask</li>
+            <li>MySQL</li><li>MongoDB</li><li>Firebase</li><li>Git</li><li>Docker</li><li>Kubernetes</li>
+            <li>Python</li><li>C++</li><li>Java</li><li>AI/ML tools</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
     <!-- ============ ABOUT: who we are and our mission, then what we do as ruled rows ============ -->
     <section id="about" class="wrap scroll-mt-16 py-24">
@@ -665,8 +670,8 @@
       }, 120);
     }, calm ? 0 : 1300);
 
-    // ---------- Construction tape: repeat the words so each track is far wider than the screen (the loop needs 2 identical halves) ----------
-    document.querySelectorAll('.track').forEach(t => t.innerHTML = t.innerHTML.repeat(t.closest('.tape-b') ? 12 : 6));
+    // ---------- Stack strip: append a second copy of the list for the seamless loop (hidden from screen readers) ----------
+    document.querySelectorAll('.track').forEach(t => t.insertAdjacentHTML('beforeend', t.innerHTML.replace(/<li>/g, '<li aria-hidden="true">')));
 
     // ---------- Drafting light: follow the mouse (only on devices with a real pointer, and not for reduced motion) ----------
     const spot = $('.spot');
