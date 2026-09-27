@@ -238,18 +238,17 @@
           <button type="button" class="rounded border border-line/40 px-2 py-1 text-xs text-fog hover:border-tape hover:text-paper">help</button>
           <button type="button" class="rounded border border-line/40 px-2 py-1 text-xs text-fog hover:border-tape hover:text-paper">projects</button>
           <button type="button" class="rounded border border-line/40 px-2 py-1 text-xs text-fog hover:border-tape hover:text-paper">events</button>
-          <button type="button" class="rounded border border-line/40 px-2 py-1 text-xs text-fog hover:border-tape hover:text-paper">crew</button>
-          <button type="button" class="rounded border border-line/40 px-2 py-1 text-xs text-fog hover:border-tape hover:text-paper">ls</button>
+          <button type="button" class="rounded border border-line/40 px-2 py-1 text-xs text-fog hover:border-tape hover:text-paper">activity</button>
         </div>
       </div>
     </section>
 
     <!-- ============ TITLE BLOCK: the spec table in the corner of an engineering drawing ============ -->
-    <!-- The repo count comes from github.com/nst-sdc (September 2026). Update it now and then -->
+    <!-- "81" is a fallback: the script replaces it with the live count from GitHub (see "Live GitHub data") -->
     <section class="wrap">
-      <dl class="grid grid-cols-3 border-t border-l border-line/30">
+      <dl class="grid grid-cols-3 border-t border-l border-line/30 bg-ink">   <!-- solid backing so the grid doesn't run through the numbers -->
         <div class="cell"><dt class="text-sm text-fog">Student developers</dt><dd class="font-display text-4xl sm:text-5xl">100+</dd></div>
-        <div class="cell"><dt class="text-sm text-fog">Public repos</dt><dd class="font-display text-4xl sm:text-5xl">81</dd></div>
+        <div class="cell"><dt class="text-sm text-fog">Public repos</dt><dd data-repo-count class="font-display text-4xl sm:text-5xl">81</dd></div>
         <div class="cell"><dt class="text-sm text-fog">Founded</dt><dd class="font-display text-4xl sm:text-5xl">2024</dd></div>
       </dl>
     </section>
@@ -318,7 +317,7 @@
     <section id="projects" class="scroll-mt-16 border-y border-line/30 bg-ink/60">
      <div class="wrap py-24">
       <h2 class="h2">Built by members</h2>
-      <p class="lede">A selection from our <a href="https://github.com/nst-sdc" class="link">81 public repositories</a>. Most started as a campus problem someone got tired of.</p>
+      <p class="lede">A selection from our <a href="https://github.com/nst-sdc" class="link" data-repo-count>81 public repositories</a>. Most started as a campus problem someone got tired of.</p>
       <div class="mt-10 border-t border-line/30 text-sm">
         <div class="hidden grid-cols-[13rem_1fr_9rem_8rem] gap-6 border-b border-line/30 py-3 text-fog md:grid"><span>Project</span><span>What it does</span><span>Type</span><span>Links</span></div>
         <ul class="divide-y divide-line/30 border-b border-line/30">
@@ -470,7 +469,7 @@
       <p class="lede">Two ways in. Members join the club; contributors can help from anywhere, no membership needed.</p>
       <div class="mt-10 grid gap-12 md:grid-cols-2">
         <div>
-          <h3 class="border-b border-line/30 pb-3 text-xl font-bold">As a member</h3>
+          <h3 class="text-xl font-bold">As a member</h3>
           <ol class="mt-6 space-y-6">
             <li class="grid grid-cols-[3rem_1fr]"><span class="font-display text-4xl text-tape">1</span><p><strong>Join us.</strong> <span class="text-fog">Leave your email below and follow our channels for recruitment and events.</span></p></li>
             <li class="grid grid-cols-[3rem_1fr]"><span class="font-display text-4xl text-tape">2</span><p><strong>Collaborate.</strong> <span class="text-fog">Pick up an ongoing project or pitch your own idea.</span></p></li>
@@ -478,7 +477,7 @@
           </ol>
         </div>
         <div>
-          <h3 class="border-b border-line/30 pb-3 text-xl font-bold">As a contributor</h3>
+          <h3 class="text-xl font-bold">As a contributor</h3>
           <ol class="mt-6 space-y-6">
             <li class="grid grid-cols-[3rem_1fr]"><span class="font-display text-4xl text-tape">1</span><p><strong>Explore.</strong> <span class="text-fog">Browse our repos and look for <a href="https://github.com/search?q=org%3Anst-sdc+label%3A%22good+first+issue%22&type=issues" class="link">good first issues</a>.</span></p></li>
             <li class="grid grid-cols-[3rem_1fr]"><span class="font-display text-4xl text-tape">2</span><p><strong>Fork and open a PR.</strong> <span class="text-fog">Follow each repo's contribution guidelines and send your change.</span></p></li>
@@ -488,7 +487,7 @@
       </div>
 
       <!-- FAQ with native <details>: opens and closes with no JavaScript, and is keyboard accessible for free -->
-      <div class="mt-20 divide-y divide-line/30 border-y border-line/30">
+      <div class="dashed mt-20">   <!-- yellow dashes between questions (same as What we do) -->
         <details class="group py-5">
           <summary class="flex items-center justify-between gap-4 text-lg font-bold">Do I need experience to join?<span class="plus text-2xl text-tape transition-transform" aria-hidden="true">+</span></summary>
           <p class="mt-3 max-w-2xl text-fog">No. Freshers pair with senior members from day one, and our project ideas library starts from "an input and a button".</p>
@@ -514,13 +513,13 @@
       <p class="lede">The builders, designers and engineers behind every NST SDC hackathon, workshop and repo.</p>
       <div class="mt-10 grid gap-10 md:grid-cols-3">
         <div>
-          <h3 class="border-b border-line/30 pb-3 text-sm text-fog">Leadership</h3>
+          <h3 class="text-sm text-fog">Leadership</h3>
           <ul class="mt-4 space-y-3 text-lg font-medium">
             <li class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full bg-tape font-bold text-ink">K</span>Kartik</li>
           </ul>
         </div>
         <div>
-          <h3 class="border-b border-line/30 pb-3 text-sm text-fog">Development</h3>
+          <h3 class="text-sm text-fog">Development</h3>
           <ul class="mt-4 space-y-3 text-lg font-medium">
             <li class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full border border-line/50 font-bold">T</span>Tushar</li>
             <li class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full border border-line/50 font-bold">S</span>Soham</li>
@@ -528,7 +527,7 @@
           </ul>
         </div>
         <div>
-          <h3 class="border-b border-line/30 pb-3 text-sm text-fog">Design and media</h3>
+          <h3 class="text-sm text-fog">Design and media</h3>
           <ul class="mt-4 space-y-3 text-lg font-medium">
             <li class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full border border-line/50 font-bold">M</span>Muskaan</li>
             <li class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full border border-line/50 font-bold">A</span>Ashmit</li>
@@ -591,10 +590,53 @@
     const out = $('#out'), term = $('#term'), input = term.cmd;
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;   // true = visitor asked for less motion
 
+    // ---------- Live GitHub data ----------
+    // Reads the club's real numbers from GitHub's public API (no login needed). GitHub allows about 60 requests an hour
+    // per visitor, so the result is saved in the browser for 30 minutes. If GitHub can't be reached, the page simply
+    // keeps the numbers already written in the HTML.
+    const gh = { count: 81, repos: [] };   // fallback values until the live data arrives
+
+    // "2026-09-20T10:00:00Z" -> "7 days ago" / "3 months ago", using the browser's built-in formatter
+    const ago = iso => {
+      const days = Math.round((Date.parse(iso) - Date.now()) / 864e5), rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+      if (days > -1) return 'today';
+      if (days > -30) return rtf.format(days, 'day');
+      return days > -365 ? rtf.format(Math.round(days / 30), 'month') : rtf.format(Math.round(days / 365), 'year');
+    };
+
+    // Compact age for the narrow terminal: "6d", "2mo", "1y"
+    const short = iso => { const d = Math.round((Date.now() - Date.parse(iso)) / 864e5); return d < 30 ? d + "d" : d < 365 ? Math.round(d / 30) + "mo" : Math.round(d / 365) + "y"; };
+
+    async function loadGitHub() {
+      let data;
+      try { data = JSON.parse(localStorage.getItem('sdc-github')); } catch {}   // saved copy from an earlier visit, if any
+      if (!data || Date.now() - data.saved > 30 * 60e3) {
+        const get = path => fetch('https://api.github.com/' + path).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+        const [org, repos] = await Promise.all([get('orgs/nst-sdc'), get('orgs/nst-sdc/repos?per_page=100&sort=pushed')]);
+        data = { saved: Date.now(), count: org.public_repos, repos: repos.map(r => ({ name: r.name, stars: r.stargazers_count, pushed: r.pushed_at })) };
+        try { localStorage.setItem('sdc-github', JSON.stringify(data)); } catch {}
+      }
+      gh.count = data.count; gh.repos = data.repos;   // repos are sorted newest-first, which the "activity" command relies on
+
+      // 1. Every element marked data-repo-count gets the live number
+      document.querySelectorAll('[data-repo-count]').forEach(el => el.textContent = el.textContent.replace(/\d+/, gh.count));
+      // 2. Each project row gets its star count and last update, matched by the repo name in its "Code" link
+      document.querySelectorAll('#projects li.row').forEach(row => {
+        const name = row.querySelector('a[href^="https://github.com/nst-sdc/"]')?.pathname.split('/')[2];
+        const repo = gh.repos.find(r => r.name === name);
+        if (repo) row.querySelector('p').insertAdjacentHTML('beforeend',
+          `<span class="mt-1 block text-xs text-fog/70"><span aria-hidden="true">★</span> ${repo.stars} ${repo.stars === 1 ? 'star' : 'stars'}, updated ${ago(repo.pushed)}</span>`);
+      });
+    }
+    loadGitHub().catch(() => {});   // offline or rate-limited: keep the numbers already on the page
+
     // ---------- Terminal: what each command prints ----------
     const cmds = {
-      help:     'Commands: about  mission  projects  events  stack  nst  crew  join  github  ls  clear\nTip: Tab completes a command, ↑ and ↓ scroll through your history.',
-      about:    'NST SDC is the NST Student Developer Club at Newton School of Technology.\n100+ student developers. 81 public repos. Founded 2024.',
+      help:     'Commands: about  activity  mission  projects  events  stack  nst  crew  join  github  ls  clear\nTip: Tab completes a command, ↑ and ↓ scroll through your history.',
+      about:    () => `NST SDC is the NST Student Developer Club at Newton School of Technology.\n100+ student developers. ${gh.count} public repos. Founded 2024.`,
+      activity: () => gh.repos.length
+                  ? 'Latest updates on GitHub:\n' + gh.repos.slice(0, 5).map(r => `  ${short(r.pushed).padEnd(5)}${r.name}`).join('\n')   // e.g. "  6d   Open-Source-Tracker-NST", short enough not to wrap
+                  : "Couldn't reach GitHub just now. Everything is at github.com/nst-sdc",
       mission:  'Build a culture of collaboration, innovation and open-source contribution.\n"The best way to learn is by doing, and the best way to grow is by sharing."',
       projects: 'Shuttle Tracker, Campus Buddy, Screen Time Recorder, Open Source Tracker,\nH-ckollab, StackMate, Anonymeet, Tekron 2.0, SDC Portal',
       events:   'Flagship hackathon (36h), Quicksnatch 1.0 and 2.0, Overclock (24h),\nNirmaan 1.0 and 2.0, The Archon',
