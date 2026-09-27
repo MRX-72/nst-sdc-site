@@ -166,7 +166,7 @@
 
 
     <!-- ============ PROJECTS: a blueprint "schedule" (the parts table on a drawing). One row per project ============ -->
-    <!-- Thumbnails: screenshots of each live site (img/, 640×400). Projects without a live site get a plain blueprint tile.
+    <!-- Thumbnails: screenshots of each live site (img/, 640×400). Projects without a live site are listed separately below.
          The thumbnail links repeat the "Live" link, so they are hidden from keyboards and screen readers.
          sr-only text gives screen readers "Live site of Shuttle Tracker" instead of eleven identical "Live" links -->
     <section id="projects" class="scroll-mt-16 border-y border-line/30 bg-ink/60">
@@ -182,13 +182,6 @@
             <p class="text-fog">See exactly where the college shuttle is, request a pickup in one tap, and show your class schedule to the driver.</p>
             <span>Web app</span>
             <span class="flex gap-4"><a href="https://shuttle-tracker-eta.vercel.app" class="link">Live<span class="sr-only"> site of Shuttle Tracker</span></a><a href="https://github.com/nst-sdc/Shuttle_Tracker" class="link">Code<span class="sr-only"> for Shuttle Tracker</span></a></span>
-          </li>
-          <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_7rem] lg:gap-6">
-            <div class="thumb thumb-empty" aria-hidden="true">&lt;/&gt;</div>
-            <h3 class="text-lg font-bold text-paper">Campus Buddy</h3>
-            <p class="text-fog">One place for NST students and clubs to discover, manage and track campus events.</p>
-            <span>Web app</span>
-            <span class="flex gap-4"><a href="https://github.com/nst-sdc/Campus-Buddy" class="link">Code<span class="sr-only"> for Campus Buddy</span></a></span>
           </li>
           <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_7rem] lg:gap-6">
             <a href="https://screentime-recoder.vercel.app" class="thumb" tabindex="-1" aria-hidden="true"><img src="img/screen-time-recorder.jpg" alt="" width="640" height="400" loading="lazy" decoding="async"></a>
@@ -212,35 +205,44 @@
             <span class="flex gap-4"><a href="https://h-ckollab.vercel.app" class="link">Live<span class="sr-only"> site of H-ckollab</span></a><a href="https://github.com/nst-sdc/-H-ckollab" class="link">Code<span class="sr-only"> for H-ckollab</span></a></span>
           </li>
           <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_7rem] lg:gap-6">
-            <div class="thumb thumb-empty" aria-hidden="true">&lt;/&gt;</div>
-            <h3 class="text-lg font-bold text-paper">StackMate</h3>
-            <p class="text-fog">Notes, JSON validation, Stack Overflow search and coding stats, all inside VS Code.</p>
-            <span>VS Code extension</span>
-            <span class="flex gap-4"><a href="https://github.com/nst-sdc/StackMate" class="link">Code<span class="sr-only"> for StackMate</span></a></span>
-          </li>
-          <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_7rem] lg:gap-6">
             <a href="https://anonymeet.vercel.app" class="thumb" tabindex="-1" aria-hidden="true"><img src="img/anonymeet.jpg" alt="" width="640" height="400" loading="lazy" decoding="async"></a>
             <h3 class="text-lg font-bold text-paper">Anonymeet</h3>
             <p class="text-fog">Students ask teachers questions anonymously, in real time, so nobody stays stuck because they're shy.</p>
             <span>Web app</span>
             <span class="flex gap-4"><a href="https://anonymeet.vercel.app" class="link">Live<span class="sr-only"> site of Anonymeet</span></a><a href="https://github.com/nst-sdc/Anonymous_Question_Asking-Platform" class="link">Code<span class="sr-only"> for Anonymeet</span></a></span>
           </li>
-          <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_7rem] lg:gap-6">
-            <div class="thumb thumb-empty" aria-hidden="true">&lt;/&gt;</div>
-            <h3 class="text-lg font-bold text-paper">Tekron 2.0</h3>
+        </ul>
+      </div>
+
+      <!-- Projects without a live site: a compact list, no thumbnails (there's no screenshot to show) -->
+      <h3 class="mt-16 text-xl font-bold">More on GitHub</h3>
+      <p class="mt-2 text-fog">No live demo yet, but the code is open. Clone it, run it, or send a pull request.</p>
+      <ul class="mt-6 divide-y divide-line/30 border-y border-line/30 text-sm">
+          <li class="row grid gap-2 py-5 md:grid-cols-[12rem_1fr_9rem_5rem] md:gap-6">
+            <h4 class="font-bold text-paper">Campus Buddy</h4>
+            <p class="text-fog">One place for NST students and clubs to discover, manage and track campus events.</p>
+            <span>Web app</span>
+            <span class="flex gap-4"><a href="https://github.com/nst-sdc/Campus-Buddy" class="link">Code<span class="sr-only"> for Campus Buddy</span></a></span>
+          </li>
+          <li class="row grid gap-2 py-5 md:grid-cols-[12rem_1fr_9rem_5rem] md:gap-6">
+            <h4 class="font-bold text-paper">StackMate</h4>
+            <p class="text-fog">Notes, JSON validation, Stack Overflow search and coding stats, all inside VS Code.</p>
+            <span>VS Code extension</span>
+            <span class="flex gap-4"><a href="https://github.com/nst-sdc/StackMate" class="link">Code<span class="sr-only"> for StackMate</span></a></span>
+          </li>
+          <li class="row grid gap-2 py-5 md:grid-cols-[12rem_1fr_9rem_5rem] md:gap-6">
+            <h4 class="font-bold text-paper">Tekron 2.0</h4>
             <p class="text-fog">Check-in for college fests: fast entry, live updates and venue assignment the moment you arrive.</p>
             <span>Mobile app</span>
             <span class="flex gap-4"><a href="https://github.com/nst-sdc/tekron-2.0-APK" class="link">Code<span class="sr-only"> for Tekron 2.0</span></a></span>
           </li>
-          <li class="row grid gap-2 py-5 lg:grid-cols-[9rem_12rem_1fr_8rem_7rem] lg:gap-6">
-            <div class="thumb thumb-empty" aria-hidden="true">&lt;/&gt;</div>
-            <h3 class="text-lg font-bold text-paper">SDC Portal</h3>
+          <li class="row grid gap-2 py-5 md:grid-cols-[12rem_1fr_9rem_5rem] md:gap-6">
+            <h4 class="font-bold text-paper">SDC Portal</h4>
             <p class="text-fog">Dashboards for members' GitHub activity: commits, pull requests, issues, leaderboards and achievements.</p>
             <span>Web app</span>
             <span class="flex gap-4"><a href="https://github.com/nst-sdc/NST-SDC-Portal" class="link">Code<span class="sr-only"> for SDC Portal</span></a></span>
           </li>
-        </ul>
-      </div>
+      </ul>
      </div>
     </section>
 
