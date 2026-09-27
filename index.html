@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NST SDC — NST Student Developer Club</title>
+  <meta name="description" content="The NST Student Developer Club at Newton School of Technology. Open-source projects, hackathons, workshops and mentorship, run by students.">
+  <!-- Browser tab icon: a terminal prompt ">_" drawn inline as SVG, so there is no extra file to host -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2309203a'/%3E%3Cpath d='M8 10l6 6-6 6' stroke='%23eaf2fa' stroke-width='3' fill='none'/%3E%3Crect x='16' y='20' width='9' height='3' fill='%23ffc928'/%3E%3C/svg%3E">
+  <meta name="theme-color" content="#09203a">   <!-- colours the browser bar on phones -->
+  <!-- Link previews (WhatsApp, LinkedIn, X...). Crawlers need an absolute URL: after deploying, change og.png to https://your-domain/og.png -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="NST SDC — NST Student Developer Club">
+  <meta property="og:description" content="Students at Newton School of Technology who learn by building and grow by sharing.">
+  <meta property="og:image" content="og.png">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Fonts: a stencil face (construction-site signage) for headlines, a clean grotesk for reading, a mono for the terminal -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Display:wght@800&family=Hanken+Grotesk:wght@400;500;700&family=JetBrains+Mono&display=swap">
+
+  <!-- Tailwind v4 in the browser: no build step, it reads the classes on the page and generates the CSS.
+       Pinned to an exact version + integrity hash so a tampered CDN file is refused -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3/dist/index.global.js" integrity="sha384-2ql948lIdLcGEE0/qxNiudyTjgauA3RDJERu5xW75kFCvSl5a9odyQYCb6tEjnmB" crossorigin="anonymous"></script>
+  <style type="text/tailwindcss">
+    /* Design tokens. Every class like bg-print, text-tape or font-display comes from these */
+    @theme {
+      --color-ink:   #09203a;   /* deepest blueprint blue: header, tiles, terminal */
+      --color-print: #0e2b4a;   /* blueprint blue: the page itself */
+      --color-line:  #6fa0d0;   /* drafting lines and borders (used at low opacity) */
+      --color-paper: #eaf2fa;   /* chalk-white text */
+      --color-fog:   #9db6ce;   /* secondary text */
+      --color-tape:  #ffc928;   /* construction-tape yellow: actions and highlights only */
+      --font-display: "Big Shoulders Stencil Display", sans-serif;
+      --font-sans: "Hanken Grotesk", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    /* Blueprint paper, in three layers.
+       1. The drafting grid (scrolls with the page, like a real sheet): faint 24px squares, slightly stronger 120px squares,
+          and a small "+" registration mark where the big lines cross. The "+" tile is shifted by -60px so it lands on the crossings */
+    body {
+      background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cpath d='M60 55v10M55 60h10' stroke='%236fa0d0' stroke-opacity='.35'/%3E%3C/svg%3E") -60px -60px / 120px 120px,
+        linear-gradient(#6fa0d01a 1px, transparent 1px) 0 0 / 120px 120px,
+        linear-gradient(90deg, #6fa0d01a 1px, transparent 1px) 0 0 / 120px 120px,
+        linear-gradient(#6fa0d00c 1px, transparent 1px) 0 0 / 24px 24px,
+        linear-gradient(90deg, #6fa0d00c 1px, transparent 1px) 0 0 / 24px 24px,
+        var(--color-print);
+    }
+    /* 2. Light and shadow (fixed to the screen): a pool of light from the top, and darker edges like an old cyanotype print.
+       z-index -1 keeps it behind all content; pointer-events none means it never blocks a click */
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 55% at 50% -5%, #2b6cab80, transparent 70%),
+        radial-gradient(ellipse 120% 90% at 50% 40%, transparent 55%, #041426b3 100%);
+    }
+    /* 3. Paper grain: SVG noise at very low opacity, so the blue reads as printed paper rather than a flat screen colour */
+    body::after {
+      content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .07;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* Keyboard users always see where they are. Inside @layer base so a utility like focus-visible:outline-none can still override it */
+    @layer base { :focus-visible { outline: 2px solid var(--color-tape); outline-offset: 3px; } }
+
+    /* Reusable pieces, so the same look isn't retyped on every element */
+    @layer components {
+      .wrap  { @apply mx-auto max-w-6xl px-5; }                                        /* page width + side gutters */
+      .h2    { @apply font-display text-5xl uppercase sm:text-6xl; }                   /* section headings */
+      .lede  { @apply mt-4 max-w-2xl text-lg text-fog; }                               /* the intro line under a heading */
+      .chip  { @apply rounded-full border border-line/40 px-3 py-1 text-xs; }          /* small tag pill */
+      .cell  { @apply border-r border-b border-line/30 p-6; }                          /* one box in a blueprint panel grid */
+      .link  { @apply text-tape underline decoration-tape/40 underline-offset-4 hover:decoration-tape; }
+    }
+
+    /* The blinking block cursor after the headline. Stops for people who prefer less motion */
+    .cursor { animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } html { scroll-behavior: auto; } }
+
+    /* When a terminal command jumps to a section, its heading glows yellow for a moment so you see where you landed */
+    .h2 { transition: color .4s; }
+    .flash .h2 { color: var(--color-tape); }
+
+    /* <details> FAQ: turn the default triangle into a + that rotates into × when open */
+    summary { list-style: none; cursor: pointer; }
+    summary::-webkit-details-marker { display: none; }
+    details[open] .plus { rotate: 45deg; }
+    /* ...and let the answer slide open instead of snapping. interpolate-size allows animating to "auto" height.
+       Browsers without support simply open instantly */
+    :root { interpolate-size: allow-keywords; }
+    details::details-content { block-size: 0; overflow: hidden; transition: block-size .3s ease, content-visibility .3s allow-discrete; }
+    details[open]::details-content { block-size: auto; }
+
+    /* ================= MOTION =================
+       1. Page load, the one orchestrated moment: the headline is "plotted" left to right like a blueprint printer,
+          then the intro, buttons and terminal rise in one after another (--d sets each one's delay) */
+    @keyframes plot { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -10% 0 0); } }
+    @keyframes rise { from { opacity: 0; translate: 0 14px; } }
+    .plot { animation: plot 1.1s cubic-bezier(.7, 0, .2, 1) both; }
+    .rise { animation: rise .7s ease-out var(--d, 0s) both; }
+
+    /* 2. Drafting light: on computers with a mouse, a soft circle of brighter grid follows the pointer.
+          The script sets --x/--y; the mask shows the bright grid only inside the circle */
+    .spot {
+      position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .5s;
+      background:
+        linear-gradient(#8fbde84d 1px, transparent 1px) 0 0 / 24px 24px,
+        linear-gradient(90deg, #8fbde84d 1px, transparent 1px) 0 0 / 24px 24px;
+      mask: radial-gradient(220px circle at var(--x, -999px) var(--y, -999px), #000, transparent 75%);
+    }
+    .spot.on { opacity: 1; }
+    body { position: relative; }   /* so .spot covers the whole page, not just the first screen */
+
+    /* 3. The light pool at the top of the page drifts very slowly side to side, like light moving across a desk */
+    @keyframes drift { from { background-position: -8vw 0, 0 0; } to { background-position: 8vw 0, 0 0; } }
+    body::before { animation: drift 18s ease-in-out infinite alternate; }
+
+    /* 4. Scroll-linked, pure CSS (no JavaScript): a yellow reading-progress line under the header,
+          and the timeline's dimension line drawing itself as it scrolls into view. Hidden/fully drawn where unsupported */
+    .progress { display: none; }
+    @supports (animation-timeline: scroll()) {
+      .progress { display: block; animation: grow linear both; animation-timeline: scroll(root); }
+      .rule { animation: grow linear both; animation-timeline: view(); animation-range: entry 10% cover 40%; }
+    }
+    @keyframes grow { from { scale: 0 1; } }
+
+    /* 5. Project rows: hovering or tabbing into a row tints it and slides in a yellow marker, so you can follow it across */
+    .row { position: relative; transition: background-color .2s; }
+    .row::before { content: ""; position: absolute; left: -1.25rem; top: 1.25rem; bottom: 1.25rem; width: 2px; background: var(--color-tape); scale: 1 0; transition: scale .25s ease-out; }
+    .row:hover, .row:focus-within { background: #ffffff08; }
+    .row:hover::before, .row:focus-within::before { scale: 1 1; }
+
+    /* 6. Header links: the section you're reading is underlined in yellow (the script marks it with aria-current) */
+    nav a[aria-current] { color: var(--color-paper); text-decoration: underline 2px var(--color-tape); text-underline-offset: 8px; }
+
+    /* 7. Buttons press down slightly when clicked */
+    a[class*="px-6"]:active, button:active { translate: 0 1px; }
+
+    /* Everyone who asked their system for less motion gets none of the above: everything appears in its final state */
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after { animation: none !important; transition: none !important; }
+      .progress, .spot { display: none; }
+    }
+  </style>
+</head>
+
+<body class="font-sans text-paper antialiased selection:bg-tape selection:text-ink">
+  <!-- The drafting light that follows the mouse (see MOTION 2). Purely decorative, so hidden from screen readers -->
+  <div class="spot" aria-hidden="true"></div>
+  <!-- Header: sticks to the top and blurs the page scrolling underneath. Text links hide on phones; Join stays -->
+  <header class="sticky top-0 z-10 border-b border-line/20 bg-ink/70 backdrop-blur">
+    <!-- Reading progress: grows from 0 to full width as you scroll the page (see MOTION 4) -->
+    <div class="progress absolute inset-x-0 -bottom-px h-0.5 origin-left bg-tape" aria-hidden="true"></div>
+    <nav class="wrap flex items-center justify-between py-3" aria-label="Main">
+      <a href="#" class="font-display text-2xl uppercase tracking-wide">NST/SDC</a>
+      <div class="flex items-center gap-6 text-sm text-fog">
+        <a href="#about" class="hidden hover:text-paper md:block">About</a>
+        <a href="#projects" class="hidden hover:text-paper md:block">Projects</a>
+        <a href="#events" class="hidden hover:text-paper md:block">Events</a>
+        <a href="#nst" class="hidden hover:text-paper md:block">NST</a>
+        <a href="#crew" class="hidden hover:text-paper md:block">Crew</a>
+        <a href="#join" class="rounded bg-tape px-4 py-2 font-bold text-ink hover:brightness-110">Join us</a>
+        <!-- Phones only: opens the menu panel below -->
+        <button popovertarget="menu" class="rounded border border-line/50 px-4 py-2 font-medium text-paper md:hidden">Menu</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Phone menu. "popover" is a native browser feature: it opens on top of the page, closes on Esc or a tap outside -->
+  <div id="menu" popover class="inset-x-0 top-16 bottom-auto m-0 h-auto w-full border-0 border-b border-line/30 bg-ink p-0 text-paper">
+    <nav aria-label="Mobile" class="wrap flex flex-col py-2 text-lg">
+      <a href="#about" class="border-b border-line/20 py-3">About</a>
+      <a href="#projects" class="border-b border-line/20 py-3">Projects</a>
+      <a href="#events" class="border-b border-line/20 py-3">Events</a>
+      <a href="#nst" class="border-b border-line/20 py-3">NST</a>
+      <a href="#crew" class="py-3">Crew</a>
+    </nav>
+  </div>
+
+  <main>
+    <!-- ============ HERO: stencil headline on the left, a working terminal on the right (stacked on phones) ============ -->
+    <section class="wrap grid items-end gap-12 pt-20 pb-16 lg:grid-cols-[1.15fr_1fr] lg:pt-28">
+      <div>
+        <h1 class="plot font-display text-[clamp(3.5rem,16vw,9.5rem)] leading-[.85] uppercase">
+          Code the experience<span class="cursor text-tape" aria-hidden="true">_</span>
+        </h1>
+        <p class="rise mt-6 max-w-md text-lg text-fog" style="--d:.7s">We're the NST Student Developer Club: students at Newton School of Technology who learn by building and grow by sharing.</p>
+        <div class="rise mt-8 flex flex-wrap gap-3" style="--d:.85s">
+          <a href="#join" class="rounded bg-tape px-6 py-3 font-bold text-ink hover:brightness-110">Join the club</a>
+          <a href="#projects" class="rounded border border-line/50 px-6 py-3 font-medium hover:border-paper">See what we've built</a>
+        </div>
+      </div>
+
+      <!-- The terminal. Visitors can type real commands; the script at the bottom answers them.
+           focus-within lights the border yellow while the prompt has focus (that is the keyboard focus indicator here) -->
+      <div id="terminal" style="--d:1s" class="rise overflow-hidden rounded-xl border border-line/30 bg-ink/90 font-mono text-sm shadow-2xl shadow-black/40 focus-within:border-tape/70">
+        <div class="flex items-center gap-2 border-b border-line/20 px-4 py-3">
+          <span class="size-3 rounded-full bg-[#ff5f57]"></span><span class="size-3 rounded-full bg-[#febc2e]"></span><span class="size-3 rounded-full bg-[#28c840]"></span>
+          <span class="ml-2 text-xs text-fog">sdc@nst: ~</span>
+        </div>
+        <!-- aria-live reads new output aloud to screen-reader users -->
+        <pre id="out" aria-live="polite" class="h-56 overflow-y-auto p-4 whitespace-pre-wrap text-fog"></pre>
+        <form id="term" class="flex items-center gap-2 border-t border-line/20 px-4 py-3">
+          <label for="cmd" class="text-tape">$</label>
+          <input id="cmd" name="cmd" autocomplete="off" spellcheck="false" placeholder="type help" class="caret-tape w-full bg-transparent text-paper placeholder:text-fog/50 focus-visible:outline-none">
+        </form>
+        <!-- One-tap commands for people who won't type (most phone users). Each button runs the command named on it -->
+        <div id="quick" class="flex flex-wrap gap-2 border-t border-line/20 px-4 py-3" aria-label="Quick commands">
+          <button type="button" class="rounded border border-line/40 px-2 py-1 text-xs text-fog hover:border-tape hover:text-paper">help</button>
+          <button type="button" class="rounded border border-line/40 px-2 py-1 text-xs text-fog hover:border-tape hover:text-paper">projects</button>
+          <button type="button" class="rounded border border-line/40 px-2 py-1 text-xs text-fog hover:border-tape hover:text-paper">events</button>
+          <button type="button" class="rounded border border-line/40 px-2 py-1 text-xs text-fog hover:border-tape hover:text-paper">crew</button>
+          <button type="button" class="rounded border border-line/40 px-2 py-1 text-xs text-fog hover:border-tape hover:text-paper">ls</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TITLE BLOCK: the spec table in the corner of an engineering drawing ============ -->
+    <!-- The repo count comes from github.com/nst-sdc (September 2026). Update it now and then -->
+    <section class="wrap">
+      <dl class="grid grid-cols-3 border-t border-l border-line/30">
+        <div class="cell"><dt class="text-sm text-fog">Student developers</dt><dd class="font-display text-4xl sm:text-5xl">100+</dd></div>
+        <div class="cell"><dt class="text-sm text-fog">Public repos</dt><dd class="font-display text-4xl sm:text-5xl">81</dd></div>
+        <div class="cell"><dt class="text-sm text-fog">Founded</dt><dd class="font-display text-4xl sm:text-5xl">2024</dd></div>
+      </dl>
+    </section>
+
+    <!-- ============ ABOUT: who we are and our mission, then what we do as ruled rows ============ -->
+    <section id="about" class="wrap scroll-mt-16 py-24">
+      <div class="grid gap-8 md:grid-cols-[1fr_1.4fr]">
+        <h2 class="h2">Who we are</h2>
+        <div class="space-y-5 text-lg leading-relaxed text-fog">
+          <p>The NST Student Developer Club is a community of developers, designers and tinkerers, run entirely by students of <a href="#nst" class="link">Newton School of Technology</a>. We give students a place to collaborate, learn and grow together in tech.</p>
+          <p><strong class="text-paper">Our mission</strong> is to build a culture of collaboration, innovation and open-source contribution, so every member leaves ready for real-world engineering.</p>
+        </div>
+      </div>
+
+      <h3 class="mt-20 text-2xl font-bold">What we do</h3>
+      <div class="mt-6 divide-y divide-line/30 border-y border-line/30">
+        <article class="grid gap-3 py-7 md:grid-cols-[1fr_1.4fr]">
+          <h4 class="text-xl font-bold">Open-source projects</h4>
+          <p class="text-fog">We build and maintain tools that NST students actually use, all in the open on GitHub. Every October, Hacktoberfest events and beginner workshops take members from zero to their first merged pull request.</p>
+        </article>
+        <article class="grid gap-3 py-7 md:grid-cols-[1fr_1.4fr]">
+          <h4 class="text-xl font-bold">Workshops and webinars</h4>
+          <p class="text-fog">Hands-on sessions on the tools the industry uses right now, from Go and LangChain to Docker, Kubernetes and DevOps pipelines.</p>
+        </article>
+        <article class="grid gap-3 py-7 md:grid-cols-[1fr_1.4fr]">
+          <h4 class="text-xl font-bold">Competitions and hackathons</h4>
+          <p class="text-fog">Timed builds and regular coding challenges, from terminal puzzles in Quicksnatch to full hackathons, where you solve real problems under pressure and then demo what you made.</p>
+        </article>
+        <article class="grid gap-3 py-7 md:grid-cols-[1fr_1.4fr]">
+          <h4 class="text-xl font-bold">Mentorship and GSoC prep</h4>
+          <p class="text-fog">Freshers pair with senior members, get their code reviewed and learn how production software is really built. Those aiming for Google Summer of Code get focused help contributing to open-source organisations first.</p>
+        </article>
+        <article class="grid gap-3 py-7 md:grid-cols-[1fr_1.4fr]">
+          <h4 class="text-xl font-bold">Knowledge sharing</h4>
+          <p class="text-fog">Docs, tutorials and a <a href="https://nst-sdc.github.io/project-ideas/" class="link">project ideas</a> library with 64 guided builds, so what one member learns, everyone can use. Members showcase what they've built and swap ideas with each other.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ PHILOSOPHY: the club's motto, set big as a pull quote between sections ============ -->
+    <section>
+      <figure class="wrap pb-24">
+        <blockquote class="max-w-4xl border-l-4 border-tape pl-6 text-[clamp(1.75rem,4vw,3rem)] leading-tight font-medium">“The best way to learn is by doing, and the best way to grow is by sharing.”</blockquote>
+        <figcaption class="mt-6 text-fog">The NST SDC philosophy</figcaption>
+      </figure>
+    </section>
+
+
+    <!-- ============ PROJECTS: a blueprint "schedule" (the parts table on a drawing). One row per project ============ -->
+    <!-- sr-only text gives screen readers "Live site of Shuttle Tracker" instead of eleven identical "Live" links -->
+    <section id="projects" class="scroll-mt-16 border-y border-line/30 bg-ink/60">
+     <div class="wrap py-24">
+      <h2 class="h2">Built by members</h2>
+      <p class="lede">A selection from our <a href="https://github.com/nst-sdc" class="link">81 public repositories</a>. Most started as a campus problem someone got tired of.</p>
+      <div class="mt-10 border-t border-line/30 text-sm">
+        <div class="hidden grid-cols-[13rem_1fr_9rem_8rem] gap-6 border-b border-line/30 py-3 text-fog md:grid"><span>Project</span><span>What it does</span><span>Type</span><span>Links</span></div>
+        <ul class="divide-y divide-line/30 border-b border-line/30">
+          <li class="row grid gap-2 py-5 md:grid-cols-[13rem_1fr_9rem_8rem] md:gap-6">
+            <h3 class="text-lg font-bold text-paper">Shuttle Tracker</h3>
+            <p class="text-fog">See exactly where the college shuttle is, request a pickup in one tap, and show your class schedule to the driver.</p>
+            <span>Web app</span>
+            <span class="flex gap-4"><a href="https://shuttle-tracker-eta.vercel.app" class="link">Live<span class="sr-only"> site of Shuttle Tracker</span></a><a href="https://github.com/nst-sdc/Shuttle_Tracker" class="link">Code<span class="sr-only"> for Shuttle Tracker</span></a></span>
+          </li>
+          <li class="row grid gap-2 py-5 md:grid-cols-[13rem_1fr_9rem_8rem] md:gap-6">
+            <h3 class="text-lg font-bold text-paper">Campus Buddy</h3>
+            <p class="text-fog">One place for NST students and clubs to discover, manage and track campus events.</p>
+            <span>Web app</span>
+            <span class="flex gap-4"><a href="https://github.com/nst-sdc/Campus-Buddy" class="link">Code<span class="sr-only"> for Campus Buddy</span></a></span>
+          </li>
+          <li class="row grid gap-2 py-5 md:grid-cols-[13rem_1fr_9rem_8rem] md:gap-6">
+            <h3 class="text-lg font-bold text-paper">Screen Time Recorder</h3>
+            <p class="text-fog">Measures your real study time by analysing what's on screen, and uses AI to spot focus, flag hard topics and offer help.</p>
+            <span>Web app, AI</span>
+            <span class="flex gap-4"><a href="https://screentime-recoder.vercel.app" class="link">Live<span class="sr-only"> site of Screen Time Recorder</span></a><a href="https://github.com/nst-sdc/Screentime-recoder" class="link">Code<span class="sr-only"> for Screen Time Recorder</span></a></span>
+          </li>
+          <li class="row grid gap-2 py-5 md:grid-cols-[13rem_1fr_9rem_8rem] md:gap-6">
+            <h3 class="text-lg font-bold text-paper">Open Source Tracker</h3>
+            <p class="text-fog">Follows open-source contributions made by NST students across GitHub.</p>
+            <span>Web app</span>
+            <span class="flex gap-4"><a href="https://oss-tracker.nstsdc.org" class="link">Live<span class="sr-only"> site of Open Source Tracker</span></a><a href="https://github.com/nst-sdc/Open-Source-Tracker-NST" class="link">Code<span class="sr-only"> for Open Source Tracker</span></a></span>
+          </li>
+          <li class="row grid gap-2 py-5 md:grid-cols-[13rem_1fr_9rem_8rem] md:gap-6">
+            <h3 class="text-lg font-bold text-paper">H-ckollab</h3>
+            <p class="text-fog">Find the right teammates for hackathons and project-based learning.</p>
+            <span>Full-stack app</span>
+            <span class="flex gap-4"><a href="https://h-ckollab.vercel.app" class="link">Live<span class="sr-only"> site of H-ckollab</span></a><a href="https://github.com/nst-sdc/-H-ckollab" class="link">Code<span class="sr-only"> for H-ckollab</span></a></span>
+          </li>
+          <li class="row grid gap-2 py-5 md:grid-cols-[13rem_1fr_9rem_8rem] md:gap-6">
+            <h3 class="text-lg font-bold text-paper">StackMate</h3>
+            <p class="text-fog">Notes, JSON validation, Stack Overflow search and coding stats, all inside VS Code.</p>
+            <span>VS Code extension</span>
+            <span class="flex gap-4"><a href="https://github.com/nst-sdc/StackMate" class="link">Code<span class="sr-only"> for StackMate</span></a></span>
+          </li>
+          <li class="row grid gap-2 py-5 md:grid-cols-[13rem_1fr_9rem_8rem] md:gap-6">
+            <h3 class="text-lg font-bold text-paper">Anonymeet</h3>
+            <p class="text-fog">Students ask teachers questions anonymously, in real time, so nobody stays stuck because they're shy.</p>
+            <span>Web app</span>
+            <span class="flex gap-4"><a href="https://anonymeet.vercel.app" class="link">Live<span class="sr-only"> site of Anonymeet</span></a><a href="https://github.com/nst-sdc/Anonymous_Question_Asking-Platform" class="link">Code<span class="sr-only"> for Anonymeet</span></a></span>
+          </li>
+          <li class="row grid gap-2 py-5 md:grid-cols-[13rem_1fr_9rem_8rem] md:gap-6">
+            <h3 class="text-lg font-bold text-paper">Tekron 2.0</h3>
+            <p class="text-fog">Check-in for college fests: fast entry, live updates and venue assignment the moment you arrive.</p>
+            <span>Mobile app</span>
+            <span class="flex gap-4"><a href="https://github.com/nst-sdc/tekron-2.0-APK" class="link">Code<span class="sr-only"> for Tekron 2.0</span></a></span>
+          </li>
+          <li class="row grid gap-2 py-5 md:grid-cols-[13rem_1fr_9rem_8rem] md:gap-6">
+            <h3 class="text-lg font-bold text-paper">SDC Portal</h3>
+            <p class="text-fog">Dashboards for members' GitHub activity: commits, pull requests, issues, leaderboards and achievements.</p>
+            <span>Web app</span>
+            <span class="flex gap-4"><a href="https://github.com/nst-sdc/NST-SDC-Portal" class="link">Code<span class="sr-only"> for SDC Portal</span></a></span>
+          </li>
+        </ul>
+      </div>
+     </div>
+    </section>
+
+
+    <!-- ============ EVENTS: bento grid. The flagship hackathon gets the big 2×2 tile, everything else fits around it ============ -->
+    <section id="events" class="wrap scroll-mt-16 py-24">
+      <h2 class="h2">Events</h2>
+      <p class="lede">Hackathons, code sprints and hands-on workshops, all semester long.</p>
+      <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <article class="flex flex-col justify-between gap-6 rounded-lg border border-line/30 bg-ink/80 p-6 sm:col-span-2 lg:row-span-2">
+          <p class="font-display text-[7rem] leading-none text-tape">36h</p>
+          <div><h3 class="text-2xl font-bold">Flagship hackathon</h3>
+          <p class="mt-2 text-fog">Non-stop code, peer collaboration, expert mentorship and high-energy demos. Bring your boldest idea and leave with working software.</p></div>
+        </article>
+        <article class="rounded-lg border border-line/30 bg-ink/80 p-6 sm:col-span-2">
+          <h3 class="text-xl font-bold">Quicksnatch 1.0 and 2.0</h3>
+          <p class="mt-2 text-fog">A web-based terminal challenge. Race through shell puzzles and learn the command line by playing. Built in-house on the <a href="https://github.com/nst-sdc/QuickSnatch-Platform" class="link">QuickSnatch platform</a>.</p>
+        </article>
+        <article class="rounded-lg border border-line/30 bg-ink/80 p-6 sm:col-span-2">
+          <h3 class="text-xl font-bold">Overclock</h3>
+          <p class="mt-2 text-fog">24 hours. Teams claim problem statements first come, first served, submit progress through GitHub and slides, and climb a live multi-tier leaderboard.</p>
+        </article>
+        <article class="rounded-lg border border-line/30 p-6 sm:col-span-2">
+          <h3 class="text-xl font-bold">Nirmaan 1.0</h3>
+          <p class="mt-2 text-fog">Our first web development competition, on 26 November 2024. Teams of two to four had two and a half hours, with mentors on hand, to build a responsive web app judged on innovation, design, code quality and function. <a href="https://nirmaan-nst-2024.netlify.app" class="link">Event site</a></p>
+        </article>
+        <!-- Events we have names for but no details yet share one tile, instead of leaving two near-empty boxes -->
+        <article class="rounded-lg border border-line/30 p-6 sm:col-span-2">
+          <h3 class="text-fog">Also on the calendar</h3>
+          <ul class="mt-3 space-y-1 text-xl font-bold"><li>Nirmaan 2.0</li><li>The Archon</li></ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ TIMELINE: drawn like a blueprint dimension line, one long rule with a tick at each year ============ -->
+    <section class="wrap pb-24">
+      <h2 class="h2">How we got here</h2>
+      <ol class="relative mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
+        <!-- The dimension line itself, drawn on scroll (see MOTION 4) -->
+        <span class="rule absolute inset-x-0 top-0 h-0.5 origin-left bg-line/50" aria-hidden="true"></span>
+        <li class="relative pt-8 before:absolute before:-top-3 before:left-0 before:h-5 before:w-0.5 before:bg-tape">
+          <p class="font-display text-4xl text-tape">2024</p><h3 class="mt-2 text-lg font-bold">It started with five</h3>
+          <p class="mt-2 text-fog">Five students set out to build real software beyond the curriculum. The club's GitHub opened in November, and Nirmaan 1.0 ran the same month.</p>
+        </li>
+        <li class="relative pt-8 before:absolute before:-top-3 before:left-0 before:h-5 before:w-0.5 before:bg-tape">
+          <p class="font-display text-4xl text-tape">2025</p><h3 class="mt-2 text-lg font-bold">Hackathons and Quicksnatch</h3>
+          <p class="mt-2 text-fog">NST's first flagship hackathon, Quicksnatch 1.0, and a wave of campus tools: Shuttle Tracker, StackMate, the academic tracker and more.</p>
+        </li>
+        <li class="relative pt-8 before:absolute before:-top-3 before:left-0 before:h-5 before:w-0.5 before:bg-tape">
+          <p class="font-display text-4xl text-tape">2026</p><h3 class="mt-2 text-lg font-bold">Open source and future labs</h3>
+          <p class="mt-2 text-fog">The Open Source Tracker, the Overclock platform, hardware and IoT workshops, and a direct line to engineering startups.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============ NST: context on the school the club belongs to. Figures are NST's own, as published on its website ============ -->
+    <section id="nst" class="scroll-mt-16">
+      <div class="wrap grid gap-12 pb-24 md:grid-cols-[1fr_1.4fr]">
+        <div>
+          <h2 class="h2">Newton School of Technology</h2>
+          <p class="mt-4 text-fog">Where the club lives.</p>
+        </div>
+        <div class="space-y-5 text-lg leading-relaxed text-fog">
+          <p>Newton School of Technology (NST) was founded in 2023 by IIT Roorkee alumni Siddharth Maheshwari and Nishant Chandra. It runs a four-year, residential <strong class="text-paper">B.Tech in Computer Science and Artificial Intelligence</strong>, recognised by the UGC and AICTE.</p>
+          <p>The curriculum is project-first. Students build systems like recommendation engines and delivery optimisers from year one, taught by engineers who have worked at companies like Google and Goldman Sachs. The club exists for everything that happens after class.</p>
+
+          <!-- Campuses: NST teaches in partnership with established universities -->
+          <h3 class="pt-4 font-bold text-paper">Campuses</h3>
+          <ul class="grid grid-cols-2 border-t border-l border-line/30 text-base">
+            <li class="cell p-4"><strong class="block text-paper">Delhi NCR</strong>Rishihood University</li>
+            <li class="cell p-4"><strong class="block text-paper">Pune</strong>Ajeenkya DY Patil University</li>
+            <li class="cell p-4"><strong class="block text-paper">Bengaluru</strong>S-VYASA University</li>
+            <li class="cell p-4"><strong class="block text-paper">Hyderabad</strong>St. Mary's University</li>
+          </ul>
+
+          <h3 class="pt-4 font-bold text-paper">Students so far</h3>
+          <ul class="list-disc space-y-1 pl-5 marker:text-tape">
+            <li>93% secured internships by their second year</li>
+            <li>12 students selected for Google Summer of Code</li>
+            <li>Ranked 22nd in India at ICPC 2025</li>
+          </ul>
+          <p class="text-sm">Figures from <a href="https://www.newtonschool.co/newton-school-of-technology-nst/home" class="link">NST's website</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GET INVOLVED: two real step-by-step paths, so numbering is earned here ============ -->
+    <section class="wrap py-24">
+      <h2 class="h2">Get involved</h2>
+      <p class="lede">Two ways in. Members join the club; contributors can help from anywhere, no membership needed.</p>
+      <div class="mt-10 grid gap-12 md:grid-cols-2">
+        <div>
+          <h3 class="border-b border-line/30 pb-3 text-xl font-bold">As a member</h3>
+          <ol class="mt-6 space-y-6">
+            <li class="grid grid-cols-[3rem_1fr]"><span class="font-display text-4xl text-tape">1</span><p><strong>Join us.</strong> <span class="text-fog">Leave your email below and follow our channels for recruitment and events.</span></p></li>
+            <li class="grid grid-cols-[3rem_1fr]"><span class="font-display text-4xl text-tape">2</span><p><strong>Collaborate.</strong> <span class="text-fog">Pick up an ongoing project or pitch your own idea.</span></p></li>
+            <li class="grid grid-cols-[3rem_1fr]"><span class="font-display text-4xl text-tape">3</span><p><strong>Learn and grow.</strong> <span class="text-fog">Show up to workshops, events and mentorship sessions.</span></p></li>
+          </ol>
+        </div>
+        <div>
+          <h3 class="border-b border-line/30 pb-3 text-xl font-bold">As a contributor</h3>
+          <ol class="mt-6 space-y-6">
+            <li class="grid grid-cols-[3rem_1fr]"><span class="font-display text-4xl text-tape">1</span><p><strong>Explore.</strong> <span class="text-fog">Browse our repos and look for <a href="https://github.com/search?q=org%3Anst-sdc+label%3A%22good+first+issue%22&type=issues" class="link">good first issues</a>.</span></p></li>
+            <li class="grid grid-cols-[3rem_1fr]"><span class="font-display text-4xl text-tape">2</span><p><strong>Fork and open a PR.</strong> <span class="text-fog">Follow each repo's contribution guidelines and send your change.</span></p></li>
+            <li class="grid grid-cols-[3rem_1fr]"><span class="font-display text-4xl text-tape">3</span><p><strong>Collaborate.</strong> <span class="text-fog">Talk it through with maintainers in the PR and help us improve.</span></p></li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- FAQ with native <details>: opens and closes with no JavaScript, and is keyboard accessible for free -->
+      <div class="mt-20 divide-y divide-line/30 border-y border-line/30">
+        <details class="group py-5">
+          <summary class="flex items-center justify-between gap-4 text-lg font-bold">Do I need experience to join?<span class="plus text-2xl text-tape transition-transform" aria-hidden="true">+</span></summary>
+          <p class="mt-3 max-w-2xl text-fog">No. Freshers pair with senior members from day one, and our project ideas library starts from "an input and a button".</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex items-center justify-between gap-4 text-lg font-bold">Can I contribute if I'm not at NST?<span class="plus text-2xl text-tape transition-transform" aria-hidden="true">+</span></summary>
+          <p class="mt-3 max-w-2xl text-fog">Yes. Our code is public. Fork any repo, pick an issue and open a pull request.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex items-center justify-between gap-4 text-lg font-bold">What will I actually work on?<span class="plus text-2xl text-tape transition-transform" aria-hidden="true">+</span></summary>
+          <p class="mt-3 max-w-2xl text-fog">Web apps, mobile apps, AI/ML and DevOps. Mostly tools that solve real problems on campus, like the ones listed above.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex items-center justify-between gap-4 text-lg font-bold">How do I reach the club?<span class="plus text-2xl text-tape transition-transform" aria-hidden="true">+</span></summary>
+          <p class="mt-3 max-w-2xl text-fog">Email <a href="mailto:support@nstsdc.org" class="link">support@nstsdc.org</a>, or message us on LinkedIn, X or Instagram. Links are at the bottom of the page.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ CREW: grouped by team, so the structure tells you who does what. Initials stand in for photos ============ -->
+    <section id="crew" class="wrap scroll-mt-16 pb-24">
+      <h2 class="h2">The crew</h2>
+      <p class="lede">The builders, designers and engineers behind every NST SDC hackathon, workshop and repo.</p>
+      <div class="mt-10 grid gap-10 md:grid-cols-3">
+        <div>
+          <h3 class="border-b border-line/30 pb-3 text-sm text-fog">Leadership</h3>
+          <ul class="mt-4 space-y-3 text-lg font-medium">
+            <li class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full bg-tape font-bold text-ink">K</span>Kartik</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="border-b border-line/30 pb-3 text-sm text-fog">Development</h3>
+          <ul class="mt-4 space-y-3 text-lg font-medium">
+            <li class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full border border-line/50 font-bold">T</span>Tushar</li>
+            <li class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full border border-line/50 font-bold">S</span>Soham</li>
+            <li class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full border border-line/50 font-bold">S</span>Shravani</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="border-b border-line/30 pb-3 text-sm text-fog">Design and media</h3>
+          <ul class="mt-4 space-y-3 text-lg font-medium">
+            <li class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full border border-line/50 font-bold">M</span>Muskaan</li>
+            <li class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full border border-line/50 font-bold">A</span>Ashmit</li>
+            <li class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full border border-line/50 font-bold">A</span>Arju</li>
+            <li class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full border border-line/50 font-bold">I</span>Injora</li>
+            <li class="flex items-center gap-3"><span class="grid size-10 place-items-center rounded-full border border-line/50 font-bold">T</span>Tushar Singla</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ JOIN: the one loud yellow block on the page, so the call to action can't be missed ============ -->
+    <section id="join" class="scroll-mt-16 bg-tape text-ink">
+      <div class="wrap grid items-end gap-8 py-20 md:grid-cols-[1.4fr_1fr]">
+        <div>
+          <h2 class="font-display text-[clamp(3.5rem,8vw,6rem)] leading-[.85] uppercase">Build with us</h2>
+          <p class="mt-4 max-w-sm text-lg">Leave your email and we'll tell you when recruitment opens. Or write to <a href="mailto:support@nstsdc.org" class="font-bold underline underline-offset-4">support@nstsdc.org</a>.</p>
+        </div>
+        <!-- The script at the bottom handles sending. The status line below tells people what happened -->
+        <div>
+          <form id="join-form" class="flex flex-col gap-3 sm:flex-row">
+            <label for="email" class="sr-only">Email</label>
+            <input id="email" type="email" name="email" required placeholder="you@example.com" class="min-w-0 flex-1 rounded border-2 border-ink bg-transparent px-4 py-3 placeholder:text-ink/50 focus:outline-none focus-visible:bg-white/40">
+            <button class="rounded bg-ink px-6 py-3 font-bold text-tape hover:bg-print focus-visible:outline-ink">Notify me</button>
+          </form>
+          <p id="join-status" role="status" class="mt-3 min-h-6 font-medium"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER: who we are, where to go on this page, and where to find us elsewhere ============ -->
+  <footer class="wrap grid gap-10 py-16 text-sm text-fog md:grid-cols-[2fr_1fr_1fr]">
+    <div>
+      <p class="font-display text-3xl uppercase text-paper">NST/SDC</p>
+      <p class="mt-3 max-w-xs">The NST Student Developer Club, run by students of Newton School of Technology.</p>
+      <p class="mt-6">© 2026 NST SDC</p>
+    </div>
+    <nav aria-label="Footer">
+      <h2 class="font-bold text-paper">On this page</h2>
+      <ul class="mt-3 space-y-2"><li><a href="#about" class="hover:text-paper">About</a></li><li><a href="#projects" class="hover:text-paper">Projects</a></li><li><a href="#events" class="hover:text-paper">Events</a></li><li><a href="#nst" class="hover:text-paper">NST</a></li><li><a href="#crew" class="hover:text-paper">Crew</a></li></ul>
+    </nav>
+    <div>
+      <h2 class="font-bold text-paper">Find us</h2>
+      <ul class="mt-3 space-y-2">
+        <li><a href="https://github.com/nst-sdc" class="hover:text-paper">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/company/nst-sdc/" class="hover:text-paper">LinkedIn</a></li>
+        <li><a href="https://x.com/NSTSDC_" class="hover:text-paper">X</a></li>
+        <li><a href="https://www.instagram.com/devclub.nst/" class="hover:text-paper">Instagram</a></li>
+        <li><a href="mailto:support@nstsdc.org" class="hover:text-paper">support@nstsdc.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    const $ = s => document.querySelector(s);
+    const out = $('#out'), term = $('#term'), input = term.cmd;
+    const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;   // true = visitor asked for less motion
+
+    // ---------- Terminal: what each command prints ----------
+    const cmds = {
+      help:     'Commands: about  mission  projects  events  stack  nst  crew  join  github  ls  clear\nTip: Tab completes a command, ↑ and ↓ scroll through your history.',
+      about:    'NST SDC is the NST Student Developer Club at Newton School of Technology.\n100+ student developers. 81 public repos. Founded 2024.',
+      mission:  'Build a culture of collaboration, innovation and open-source contribution.\n"The best way to learn is by doing, and the best way to grow is by sharing."',
+      projects: 'Shuttle Tracker, Campus Buddy, Screen Time Recorder, Open Source Tracker,\nH-ckollab, StackMate, Anonymeet, Tekron 2.0, SDC Portal',
+      events:   'Flagship hackathon (36h), Quicksnatch 1.0 and 2.0, Overclock (24h),\nNirmaan 1.0 and 2.0, The Archon',
+      stack:    'Frontend: HTML, CSS, JavaScript, React, Vue.js\nBackend:  Node.js, Django, Flask\nData:     MySQL, MongoDB, Firebase\nDevOps:   Git, Docker, Kubernetes\nAlso:     Python, C++, Java, AI/ML tools',
+      nst:      'Newton School of Technology: B.Tech in CS and AI, founded 2023.\nCampuses in Delhi NCR, Pune, Bengaluru and Hyderabad.',
+      crew:     'Kartik (lead). Tushar, Soham, Shravani (dev).\nMuskaan, Ashmit, Arju, Injora, Tushar Singla (design and media)',
+      join:     'Recruitment updates go to the email you leave in the form.',
+      github:   () => (open('https://github.com/nst-sdc'), 'Opening github.com/nst-sdc in a new tab'),
+      ls:       'about.txt  projects/  events/  crew.md',
+      whoami:   'guest. Run "join" to change that.',
+    };
+    // Hidden commands: they work, but Tab completion and "help" don't reveal them. A small Quicksnatch-style puzzle
+    const secret = {
+      'ls -a':       '.  ..  .secret  about.txt  projects/  events/  crew.md',
+      'ls -la':      '.  ..  .secret  about.txt  projects/  events/  crew.md',
+      'cat .secret': 'flag{learn_by_doing_grow_by_sharing}\nYou found the hidden file. Quicksnatch is a whole game of puzzles like this.',
+      'sudo':        'Permission denied. Root access unlocks after your first merged PR.',
+    };
+    // Commands that also take you to a section of the page
+    const jump = { about: '#about', projects: '#projects', events: '#events', nst: '#nst', crew: '#crew', join: '#join' };
+
+    const history = []; let h = 0;   // past commands, and where ↑/↓ currently points
+
+    // Run one command: echo it, print the answer, then (if it's a section command) scroll there
+    function run(raw, navigate = true) {
+      const c = raw.trim().toLowerCase();
+      if (!c) return;
+      history.push(c); h = history.length;
+      if (c === 'clear') return out.textContent = '';
+      const r = cmds[c] ?? secret[c];
+      const text = typeof r === 'function' ? r() : r ?? `command not found: ${c}. Type "help" to see what works.`;
+      out.textContent += `$ ${c}\n${text}\n${navigate && jump[c] ? `[jumping to ${c}]\n` : ''}\n`;
+      out.scrollTop = out.scrollHeight;   // keep the newest line in view
+      if (navigate && jump[c]) setTimeout(() => go(jump[c]), 600);   // short pause so the answer is seen before the page moves
+    }
+
+    // Scroll to a section, move keyboard focus to its heading, and briefly light the heading up
+    function go(sel) {
+      const section = $(sel), heading = section.querySelector('h2');
+      section.scrollIntoView({ behavior: calm ? 'auto' : 'smooth' });
+      heading.tabIndex = -1; heading.focus({ preventScroll: true });   // screen readers and keyboards continue from here
+      section.classList.add('flash'); setTimeout(() => section.classList.remove('flash'), 1500);
+    }
+
+    term.onsubmit = e => { e.preventDefault(); run(input.value); input.value = ''; };
+
+    // ↑/↓ walk through history. Tab completes a command if exactly one matches; with several it lists them.
+    // With an empty prompt Tab is left alone, so keyboard users can still tab out of the terminal
+    input.onkeydown = e => {
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        h = Math.max(0, Math.min(history.length, h + (e.key === 'ArrowUp' ? -1 : 1)));
+        input.value = history[h] ?? '';
+      } else if (e.key === 'Tab' && input.value.trim()) {
+        const matches = [...Object.keys(cmds), 'clear'].filter(k => k.startsWith(input.value.trim().toLowerCase()));
+        if (!matches.length) return;
+        e.preventDefault();
+        if (matches.length === 1) input.value = matches[0];
+        else { out.textContent += matches.join('  ') + '\n\n'; out.scrollTop = out.scrollHeight; }
+      }
+    };
+
+    // Quick-command buttons run the command written on them
+    document.querySelectorAll('#quick button').forEach(b => b.onclick = () => run(b.textContent));
+    // Clicking the terminal focuses the prompt, except when the click was on a button (that would pop up the phone keyboard)
+    $('#terminal').onclick = e => e.target.closest('button') || input.focus();
+
+    // The page's one piece of automatic motion: the terminal types "about" by itself on load (without jumping anywhere).
+    // People who prefer reduced motion get the result instantly
+    // It starts once the terminal has risen into view (about 1.3s), as the last beat of the page-load sequence
+    const boot = 'about'; let i = 0;
+    setTimeout(() => {
+      const t = setInterval(() => {
+        input.value = boot.slice(0, ++i);
+        if (i < boot.length && !calm) return;
+        clearInterval(t); run(boot, false); input.value = ''; history.length = h = 0;
+        out.textContent += 'Type "help", or tap a command below.\n\n';
+      }, 120);
+    }, calm ? 0 : 1300);
+
+    // ---------- Drafting light: follow the mouse (only on devices with a real pointer, and not for reduced motion) ----------
+    const spot = $('.spot');
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches && !calm) {
+      let px = 0, py = 0, queued = false;
+      const paint = () => { spot.style.setProperty('--x', px + 'px'); spot.style.setProperty('--y', py + scrollY + 'px'); queued = false; };
+      const update = () => { if (!queued) { queued = true; requestAnimationFrame(paint); } };   // at most one repaint per frame
+      addEventListener('pointermove', e => { px = e.clientX; py = e.clientY; spot.classList.add('on'); update(); });
+      addEventListener('scroll', update, { passive: true });   // keep the light under the mouse while the page scrolls
+      document.addEventListener('pointerleave', () => spot.classList.remove('on'));
+    }
+
+    // ---------- Header: underline the link of the section you're currently reading ----------
+    const navLinks = [...document.querySelectorAll('nav[aria-label="Main"] a[href^="#"]:not([href="#join"]):not([href="#"])')];
+    const spy = new IntersectionObserver(entries => entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      navLinks.forEach(a => a.hash === '#' + e.target.id ? a.setAttribute('aria-current', 'location') : a.removeAttribute('aria-current'));
+    }), { rootMargin: '-40% 0px -55% 0px' });   // a section counts as "current" when it crosses the middle of the screen
+    navLinks.forEach(a => spy.observe($(a.hash)));
+
+    // ---------- Phone menu: close it after a link is tapped ----------
+    document.querySelectorAll('#menu a').forEach(a => a.onclick = () => $('#menu').hidePopover());
+
+    // ---------- Join form ----------
+    // Paste a Formspree (or similar) endpoint here to store emails, e.g. 'https://formspree.io/f/abcdwxyz'.
+    // Left empty, the form opens the visitor's email app with a message to the club already written
+    const FORM_ENDPOINT = '';
+    const joinForm = $('#join-form'), status = $('#join-status');
+    joinForm.onsubmit = async e => {
+      e.preventDefault();
+      const email = joinForm.email.value;
+      if (!FORM_ENDPOINT) {
+        location.href = 'mailto:support@nstsdc.org?subject=' + encodeURIComponent('Joining NST SDC') +
+          '&body=' + encodeURIComponent(`Hi! Please let me know when recruitment opens. You can reach me at ${email}.`);
+        status.textContent = 'Your email app should open with the message written. Press send to finish.';
+        return;
+      }
+      status.textContent = 'Sending...';
+      try {
+        const r = await fetch(FORM_ENDPOINT, { method: 'POST', body: new FormData(joinForm), headers: { Accept: 'application/json' } });
+        if (!r.ok) throw new Error(r.status);
+        joinForm.reset();
+        status.textContent = `You're on the list. We'll email ${email} when recruitment opens.`;
+      } catch {
+        status.textContent = "That didn't go through. Check your connection and try again, or email support@nstsdc.org.";
+      }
+    };
+  </script>
+</body>
+</html>
